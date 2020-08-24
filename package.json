@@ -1,0 +1,21 @@
+{
+  "name": "laravel",
+  "license": "MIT",
+  "preset": "src/preset.js",
+  "version": "0.1.0",
+  "private": "true",
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-simple-import-sort": "^5.0.3",
+    "prettier": "^2.0.5",
+    "standard-version": "^8.0.2",
+    "use-preset": "^0"
+  },
+  "scripts": {
+    "release": "standard-version --skip.changelog",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "npm run lint -- --fix"
+  }
+}

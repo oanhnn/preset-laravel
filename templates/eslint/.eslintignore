@@ -1,0 +1,12 @@
+# /node_modules/* and /bower_components/* in the project root are ignored by default
+/node_modules/*
+/bower_components/*
+/vendor/*
+
+# Ignore built files
+/public/*
+
+# Laravel Mix config
+webpack.mix.js
+*.config.js
+*rc.js

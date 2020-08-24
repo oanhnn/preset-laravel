@@ -1,0 +1,166 @@
+#========================
+# Define pipeline stages
+#========================
+stages:
+  - preparation
+  - test
+  - build
+  - deploy
+
+#========================
+# Define global defaults
+#========================
+default:
+  image: php:7.4-fpm-alpine
+
+#========================
+# Define global variables
+#========================
+variables:
+  GIT_DEPTH: 1
+
+#========================
+# Define jobs
+#========================
+get:vendors:
+  stage: preparation
+  needs: []
+  image: composer
+  before_script:
+    - composer config -g cache-dir "$(pwd)/composer-cache"
+    - composer global require hirak/prestissimo
+  script:
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --ignore-platform-reqs
+  cache:
+    key:
+      prefix: ${CI_JOB_NAME}
+      files:
+        - composer.json
+        - composer.lock
+    paths:
+      - composer-cache/
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 days
+    when: on_success
+
+get:node-modules:
+  stage: preparation
+  needs: []
+  image: node:12-alpine
+  script:
+    - npm ci
+  cache:
+    key:
+      prefix: ${CI_JOB_NAME}
+      files:
+        - package.json
+        - package-lock.json
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 days
+    when: on_success
+
+check:security:
+  stage: test
+  needs: []
+  before_script:
+    - curl -OL https://get.sensiolabs.org/security-checker.phar
+  script:
+    - php security-checker.phar security:check composer.lock
+
+check:phpcs:
+  stage: test
+  needs: []
+  before_script:
+    - curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+  script:
+    - php phpcs.phar --standard=phpcs.xml.dist
+
+check:eslint:
+  stage: test
+  needs:
+    - job: get:node-modules
+      artifacts: true
+  image: node:12-alpine
+  script:
+    - npm run lint
+
+# test:jest:
+#   stage: test
+#   needs:
+#     - job: get-node-modules
+#       artifacts: true
+#   image: node:12-alpine
+#   script:
+#     - npm run test
+
+test:phpunit:
+  stage: test
+  needs:
+    - job: get:vendors
+      artifacts: true
+  variables:
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_DATABASE: laravel
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    DB_HOST: mysql
+  services:
+    - name: mysql:8.0
+      command:
+        - 'mysqld'
+        - '--default-authentication-plugin=mysql_native_password'
+        - '--character-set-server=utf8mb4'
+        - '--collation-server=utf8mb4_unicode_ci'
+    - name: redis:alpine
+  before_script:
+    - pecl update-channels; pecl install xdebug; docker-php-ext-enable xdebug;
+    - cp .env.example .env
+    - php artisan key:generate
+  script:
+    - vendor/bin/phpunit --coverage-text --colors=never
+  coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+  artifacts:
+    paths:
+      - storage/logs # for debugging
+    expire_in: 1 days
+    when: on_failure
+
+build:assets:
+  stage: build
+  needs:
+    - job: get:node-modules
+      artifacts: true
+  image: node:12-alpine
+  script:
+    - npm run prod
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 days
+    when: on_success
+
+production:
+  stage: deploy
+  image: alpine:3.11
+  script:
+    - echo "TODO"
+  only:
+    - tags
+  when: manual
+  environment:
+    name: production
+
+staging:
+  stage: deploy
+  image: alpine:3.11
+  script:
+    - echo "TODO"
+  when: manual
+  environment:
+    name: staging
