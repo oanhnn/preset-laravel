@@ -1,19 +1,51 @@
-<p align="center">
-  <h1 align="center">use-preset oanhnn/laravel</h1>
-  <p align="center">
-    <a href="https://github.com/use-preset/use-preset/releases">
-      <img alt="npx use-preset oanhnn/laravel" src="https://img.shields.io/badge/use--preset-laravel-blue?style=flat-square">
-    </a>
-    &nbsp;
-    <a href="https://www.npmjs.com/package/use-preset">
-      <img alt="use-preset version" src="https://img.shields.io/npm/v/use-preset?color=32c854&style=flat-square&label=use-preset">
-    </a>
-  </p>
-  <br />
-  <p align="center">
-    <code>use-preset</code> is a scaffolding tool for developers. <a href="https://docs.usepreset.dev/">Read the documentation</a> for more information.
-  </p>
-  <br />
-  <pre align="center">npx use-preset oanhnn/laravel</pre>
-  &nbsp;
-<p>
+# My Laravel Preset
+
+## Usage
+
+```
+npx use-preset https://github.com/oanhnn/preset-laravel.git
+```
+
+Options:
+
+| Option          | Description                          |
+|:----------------|:-------------------------------------|
+| `--docker`      | Add Docker setup files               |
+| `--eslint`      | Add ESLint setup files               |
+| `--gitlab`      | Add Gitlab CI config file            |
+| `--github`      | Add Github Workflow setup files      |
+| `--phpcs`       | Add PHPCS default config file        |
+| `--vuejs`       | Add VueJS setup files                |
+| `--tailwindcss` | Apply Laravel-TailwindCSS preset     |
+
+## Changelog
+
+See all change logs in [CHANGELOG](CHANGELOG.md)
+
+## Coding style check
+
+```bash
+$ git clone git@github.com/oanhnn/preset-laravel.git /path
+$ cd /path
+$ yarn
+$ yarn lint
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email to [Oanh Nguyen](mailto:oanhnn.bk@gmail.com) instead of 
+using the issue tracker.
+
+## Credits
+
+- [Oanh Nguyen](https://github.com/oanhnn)
+- [All Contributors](../../contributors)
+
+## License
+
+This project is released under the MIT License.   
+Copyright © [Oanh Nguyen](https://oanhnn.github.io).

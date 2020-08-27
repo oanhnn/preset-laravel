@@ -10,23 +10,22 @@ module.exports = Preset.make('laravel')
   .option('vuejs', false)
   .option('tailwindcss', false)
 
-  // Apply TailwindCSS preset
-  .apply('use-preset/laravel-tailwindcss')
-  .title('Setting up TailwindCSS preset')
-  .with('--no-interaction')
-  .if(({ flags }) => Boolean(flags.tailwindcss))
-  .chain()
-
-  // Copy default files
+  // Copy all file from `default` directory to project's root
   .copyDirectory('default')
-  .title('Copy some config files')
   .to('/')
   .whenConflict('ask')
+  .title('Copy some default config files')
+  .chain()
+
+  // Apply Laravel-TailwindCSS preset
+  .apply('use-preset/laravel-tailwindcss')
+  .with('--no-interaction', '--auth', '--pagination')
+  .title('Apply Laravel-TailwindCSS preset')
+  .if(({ flags }) => Boolean(flags.tailwindcss))
   .chain()
 
   // Install eslint
   .editJson('package.json')
-  .title('Install ESLint & Prettier')
   .merge({
     scripts: {
       lint: 'eslint . --ext .js',
@@ -40,47 +39,70 @@ module.exports = Preset.make('laravel')
       prettier: '^2.0.5',
     },
   })
+  .title('Install ESLint & Prettier')
+  .if(({ flags }) => Boolean(flags.eslint))
+  .chain()
+
+  // Copy Eslint config
+  .copyDirectory('eslint')
+  .to('/')
+  .whenConflict('override')
+  .title('Copy Eslint config files')
   .if(({ flags }) => Boolean(flags.eslint))
   .chain()
 
   // Copy Docker config
   .copyDirectory('docker')
+  .to('/')
+  .whenConflict('ask')
   .title('Copy Docker config files')
-  .to('/')
-  .whenConflict('ask')
   .if(({ flags }) => Boolean(flags.docker))
-  .chain()
-
-  // Copy Eslint config
-  .copyDirectory('eslint')
-  .title('Copy Eslint config files')
-  .to('/')
-  .whenConflict('ask')
-  .if(({ flags }) => Boolean(flags.eslint))
   .chain()
 
   // Copy Github config
   .copyDirectory('github')
-  .title('Copy Github config files')
   .to('/')
   .whenConflict('ask')
+  .title('Copy Github config files')
   .if(({ flags }) => Boolean(flags.github))
   .chain()
 
   // Copy Gitlab config
   .copyDirectory('gitlab')
-  .title('Copy Gitlab config files')
   .to('/')
   .whenConflict('ask')
+  .title('Copy Gitlab config files')
   .if(({ flags }) => Boolean(flags.gitlab))
   .chain()
 
   // Copy PHPCS config
   .copyDirectory('phpcs')
-  .title('Copy PHPCS config files')
   .to('/')
   .whenConflict('ask')
+  .title('Copy PHPCS config files')
   .if(({ flags }) => Boolean(flags.phpcs))
   .chain()
 
+  // Reformating `package.json` file with indentation 2 spaces
+  .editJson('package.json')
+  .indentWith(2)
+  .title('Reformating `package.json` file with indentation 2 spaces')
+  .chain()
+
+  // Reformating `composer.json` file with indentation 2 spaces
+  .editJson('composer.json')
+  .indentWith(2)
+  .title('Reformating `composer.json` file with indentation 2 spaces')
+  .chain()
+
+  // Update Node dependencies
   .installDependencies()
+  .for('node')
+  .title('Install Node dependencies')
+  .chain()
+
+  // Update PHP dependencies
+  .installDependencies()
+  .for('php')
+  .title('Update PHP dependencies')
+  .chain()
