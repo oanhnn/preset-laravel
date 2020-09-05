@@ -1,0 +1,72 @@
+name: Test preset
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.npm
+          ~/.composer
+        key: cache-dependencies
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run lint
+      run: npm run lint
+
+    - name: Run tests
+      run: npm test
+
+  generate:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        options:
+          - '--docker'
+          - '--vuejs'
+          - '--gitlab'
+          - '--gitlab --docker'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setting up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: curl, dom, json, mbstring, openssl
+        tools: phpcs, composer, phpunit
+
+    - name: Setting up NodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.npm
+          ~/.composer
+        key: cache-dependencies
+
+    - name: Create project with composer
+      run: composer create-project --prefer-dist laravel/laravel ./ci-test
+
+    - name: Apply preset
+      run: npx use-preset .. ${{ matrix.options }}
+      working-directory: ./ci-test
+
+    - name: Run tests in the generated project
+      run: php artisan test
+      working-directory: ./ci-test
