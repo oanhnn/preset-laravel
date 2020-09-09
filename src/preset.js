@@ -21,7 +21,7 @@ module.exports = Preset.make('laravel')
   .editJson('package.json')
   .merge({
     devDependencies: {
-      '@tailwindcss/form': '^0.2',
+      '@tailwindcss/custom-forms': '^0.2',
       '@tailwindcss/ui': '^0.6',
       '@tailwindcss/typography': '^0.2',
       'postcss-nested': '^4',
