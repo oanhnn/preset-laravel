@@ -1,3 +1,6 @@
 node_modules/**/*
 *.config.js
 *rc.js
+
+# All template file
+templates/**/*

@@ -17,10 +17,28 @@ module.exports = Preset.make('laravel')
   .title('Copy some default config files')
   .chain()
 
-  // Apply Laravel-TailwindCSS preset
-  .apply('use-preset/laravel-tailwindcss')
-  .with('--no-interaction', '--auth', '--pagination')
-  .title('Apply Laravel-TailwindCSS preset')
+  // Update TailwindCSS config
+  .editJson('package.json')
+  .merge({
+    devDependencies: {
+      '@tailwindcss/form': '^0.2',
+      '@tailwindcss/ui': '^0.6',
+      '@tailwindcss/typography': '^0.2',
+      'postcss-nested': '^4',
+      'postcss-import': '^12',
+      autoprefixer: '^9.8',
+      tailwindcss: '^1.8',
+    },
+  })
+  .title('Update TailwindCSS plugins')
+  .if(({ flags }) => Boolean(flags.tailwindcss))
+  .chain()
+
+  // Copy all file from `default` directory to project's root
+  .copyDirectory('tailwindcss')
+  .to('/')
+  .whenConflict('ask')
+  .title('Update TailwindCSS config')
   .if(({ flags }) => Boolean(flags.tailwindcss))
   .chain()
 

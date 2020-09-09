@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/*
+      - release/*
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-sercurity:
+    name: '[PHP] Check security'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setting up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: curl, json
+          tools: symfony
+      - name: Run check security
+        run: symfony security:check
+
+  check-coding-style:
+    name: '[PHP] Check coding style'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Setting up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: phpcs
+      - name: Check coding style
+        run: phpcs --standard=phpcs.xml.dist
+
+  run-tests:
+    name: '[PHP] Test with PHP${{ matrix.php }}'
+    strategy:
+      matrix:
+        php:
+          - 7.3
+          - 7.4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setting up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, json, mbstring
+          tools: composer
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies with composer
+        run: composer install --no-ansi --no-interaction --no-progress --no-suggest
+      - name: Run PHPUnit
+        run: php vendor/bin/phpunit

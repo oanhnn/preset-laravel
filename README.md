@@ -16,7 +16,7 @@ Options:
 | `--github`      | Add Github Workflow setup files      |
 | `--phpcs`       | Add PHPCS default config file        |
 | `--vuejs`       | Add VueJS setup files                |
-| `--tailwindcss` | Apply Laravel-TailwindCSS preset     |
+| `--tailwindcss` | Add TailwindCSS setup file           |
 
 ## Changelog
 
