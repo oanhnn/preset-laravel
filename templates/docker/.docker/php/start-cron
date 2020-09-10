@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+
+echo "* * * * * cd /var/www && php artisan schedule:run" > /etc/crontabs/www-data
+/usr/sbin/crond -f -d 8

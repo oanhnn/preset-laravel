@@ -13,8 +13,9 @@ const { plugins } = require('./postcss.config')
  */
 
 mix
-  .js('resources/js/app.js', 'public/build')
-  .postCss('resources/css/app.css', 'public/build', plugins)
+  .disableNotifications()
+  .js('resources/js/app.js', 'public/js')
+  .postCss('resources/css/app.css', 'public/css', plugins)
   .sourceMaps()
 
 if (mix.inProduction()) {

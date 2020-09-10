@@ -3,13 +3,17 @@
 # ========================
 FROM php:7.4-fpm-alpine
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 COPY xdebug.ini /usr/local/etc/php/conf.d
 
 # Install some extensions and runtime libraries
 RUN set -eux; \
-    \
+    apk add --update --no-cache \
+        ca-certificates \
+        curl \
+        su-exec \
+    ; \
     apk add --update --no-cache --virtual .build-deps \
         freetype-dev \
         gmp-dev \
