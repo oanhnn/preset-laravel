@@ -1,9 +1,0 @@
-#!/bin/sh
-set -e
-
-cd /var/www
-while [ true ]
-do
-  su-exec ${USER_ID:-82} php artisan schedule:run --verbose --no-interaction &
-  sleep 60
-done

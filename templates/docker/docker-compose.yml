@@ -4,20 +4,20 @@ version: '3.5'
 # X-Templates
 # =========================================
 x-app-service: &app-service
-  build:
-    context:    .docker/php
-    dockerfile: Dockerfile
+  image: oanhnn/laravel:edge
   depends_on:
     - mysql
     - redis
   environment:
-    REDIS_HOST:  'redis'
-    DB_HOST:     'mysql'
-    LOG_CHANNEL: 'stderr'
+    REDIS_HOST:  redis
+    DB_HOST:     mysql
+    LOG_CHANNEL: stderr
+    USER:        1000:1000
   restart: unless-stopped
   volumes:
     - .:/var/www
     - .env:/var/www/.env
+    - .docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
   working_dir: /var/www
 
 # =========================================
@@ -32,8 +32,8 @@ networks:
 # Volumes
 # =========================================
 volumes:
-  mysql-dt: {}
-  redis-dt: {}
+  mysql-vol: {}
+  redis-vol: {}
 
 # =========================================
 # Services
@@ -41,13 +41,14 @@ volumes:
 services:
   redis:
     image: redis:alpine
+    command: redis-server --bind 0.0.0.0 --requirepass ${REDIS_PASSWORD}
     networks:
       - redis-net
     ports:
-      - 6379:6379
+      - ${REDIS_PORT:-6379}:6379
     restart: unless-stopped
     volumes:
-      - redis-dt:/data
+      - redis-vol:/data
 
   mysql:
     image: mysql:8.0
@@ -59,19 +60,21 @@ services:
       - '--collation-server=utf8mb4_unicode_ci'
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
+      # MYSQL_USER:          ${DB_USERNAME}
+      # MYSQL_PASSWORD:      ${DB_PASSWORD}
+      MYSQL_DATABASE:      ${DB_DATABASE}
     networks:
       - mysql-net
     ports:
-      - 3306:3306
+      - ${DB_PORT:-3306}:3306
     restart: unless-stopped
     volumes:
-      - mysql-dt:/var/lib/mysql
+      - mysql-vol:/var/lib/mysql
       # - .docker/mysql:/docker-entrypoint-initdb.d
 
   php:
     <<: *app-service
-    command: php artisan serve --host 0.0.0.0 --port 8000
+    command: artisan serve --host 0.0.0.0 --port 8000
     ports:
       - 8000:8000
     networks:
@@ -79,16 +82,16 @@ services:
       - redis-net
       - proxy-net
 
-  cron:
+  schedule:
     <<: *app-service
-    command: /usr/sbin/crond -f -d 8
+    command: artisan schedule:run --verbose --no-interaction --sleep=60
     networks:
       - mysql-net
       - redis-net
 
-  # queue:
-  #   <<: *app-service
-  #   command: su-exec 82 php artisan queue:work
-  #   networks:
-  #     - mysql-net
-  #     - redis-net
+  horizon:
+    <<: *app-service
+    command: artisan horizon
+    networks:
+      - mysql-net
+      - redis-net
