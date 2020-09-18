@@ -2,8 +2,10 @@
 
 ## Usage
 
-```
-npx use-preset https://github.com/oanhnn/preset-laravel.git
+```shell
+$ composer create-project laravel/laravel /path/to/project
+$ cd /path/to/project
+$ npx use-preset https://github.com/oanhnn/preset-laravel.git
 ```
 
 Options:
@@ -24,7 +26,7 @@ See all change logs in [CHANGELOG](CHANGELOG.md)
 
 ## Coding style check
 
-```bash
+```shell
 $ git clone git@github.com/oanhnn/preset-laravel.git /path
 $ cd /path
 $ yarn

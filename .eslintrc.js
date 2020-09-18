@@ -4,10 +4,9 @@ module.exports = {
     node: true,
   },
   plugins: ['simple-import-sort'],
-  extends: ['eslint:recommended', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
+  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   parserOptions: {
-    parser: '@typescript-eslint/parser',
-    ecmaVersion: 2020,
+    ecmaVersion: 2018,
     sourceType: 'module',
   },
   rules: {
