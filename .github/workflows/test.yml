@@ -18,7 +18,7 @@ jobs:
         key: cache-dependencies
 
     - name: Install dependencies
-      run: npm install
+      run: yarn --frozen-lockfile
 
     - name: Run lint
       run: npm run lint
@@ -28,14 +28,14 @@ jobs:
 
   generate:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         options:
           - '--docker'
           - '--vuejs'
           - '--gitlab'
-          - '--gitlab --docker'
+          - '--github'
+          - '--tailwindcss'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
