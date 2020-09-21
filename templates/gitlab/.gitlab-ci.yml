@@ -11,7 +11,7 @@ stages:
 # Define global defaults
 #========================
 default:
-  image: php:7.4-fpm-alpine
+  image: oanhnn/laravel:edge
 
 #========================
 # Define global variables
@@ -105,22 +105,32 @@ test:phpunit:
     - job: get:vendors
       artifacts: true
   variables:
-    MYSQL_ROOT_PASSWORD: password
+    MYSQL_ROOT_PASSWORD: rootpass
+    MYSQL_USER:     dev
+    MYSQL_PASSWORD: devpass
     MYSQL_DATABASE: laravel
-    REDIS_HOST: redis
-    REDIS_PORT: 6379
-    DB_HOST: mysql
+    REDIS_PASSWORD: password
+    REDIS_HOST:     redis
+    DB_HOST:        mysql
   services:
     - name: mysql:8.0
       command:
-        - 'mysqld'
-        - '--default-authentication-plugin=mysql_native_password'
-        - '--character-set-server=utf8mb4'
-        - '--collation-server=utf8mb4_unicode_ci'
+        - mysqld
+        - --default-authentication-plugin=mysql_native_password
+        - --character-set-server=utf8mb4
+        - --collation-server=utf8mb4_unicode_ci
     - name: redis:alpine
+      command:
+        - redis-server
+        - --appendonly=yes
+        - --requirepass=${REDIS_PASSWORD}
   before_script:
-    - pecl update-channels; pecl install xdebug; docker-php-ext-enable xdebug;
+    - docker-php-ext-enable xdebug;
     - cp .env.example .env
+    - sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${MYSQL_USER}|g" .env
+    - sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${MYSQL_PASSWORD}|g" .env
+    - sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${MYSQL_DATABASE}|g" .env
+    - sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|g" .env
     - php artisan key:generate
   script:
     - vendor/bin/phpunit --coverage-text --colors=never
@@ -147,7 +157,6 @@ build:assets:
 
 production:
   stage: deploy
-  image: alpine:3.11
   script:
     - echo "TODO"
   only:
@@ -158,7 +167,6 @@ production:
 
 staging:
   stage: deploy
-  image: alpine:3.11
   script:
     - echo "TODO"
   when: manual

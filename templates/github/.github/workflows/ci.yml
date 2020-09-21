@@ -35,8 +35,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
       - name: Setting up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -53,6 +51,20 @@ jobs:
           - 7.3
           - 7.4
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_USER:          dev
+          MYSQL_PASSWORD:      devpass
+          MYSQL_DATABASE:      laravel
+        ports:
+          - 3306/tcp
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379/tcp
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -72,6 +84,37 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies with composer
-        run: composer install --no-ansi --no-interaction --no-progress --no-suggest
+        run: composer install --no-ansi --no-interaction --no-progress --no-suggest --no-scripts
+      - name: Create .env file
+        run: |
+          cp .env.example .env
+          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=dev|g" .env
+          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=devpass|g" .env
+          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=laravel|g" .env
+          sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=null|g" .env
+          php artisan key:generate
       - name: Run PHPUnit
-        run: php vendor/bin/phpunit
+        run: php artisan test
+
+  build-assets:
+    name: '[Node] Build assets'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setting up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.OS }}-node-
+      - name: Install dependencies with npm
+        run: npm ci
+      - name: Check coding style
+        run: npm run lint
+      - name: Build assets
+        run: npm run production

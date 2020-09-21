@@ -113,6 +113,17 @@ module.exports = Preset.make('laravel')
   .title('Reformating `composer.json` file with indentation 2 spaces')
   .chain()
 
+  // Update environment variables
+  .edit(['.env', '.env.example'])
+  .replace(/^DB_USERNAME=.*$/)
+  .with('DB_USERNAME=dev')
+  .replace(/^DB_PASSWORD=.*$/)
+  .with('DB_PASSWORD=devpass')
+  .replace(/^REDIS_PASSWORD=.*$/)
+  .with('REDIS_PASSWORD=password')
+  .title('Update some environment variables')
+  .chain()
+
   // Clean up
   .delete()
   .files(['/phpunit.xml', '/.styleci.yml'])

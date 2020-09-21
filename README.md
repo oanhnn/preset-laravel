@@ -20,7 +20,7 @@ Options:
 | `--vuejs`       | Add VueJS setup files                |
 | `--tailwindcss` | Add TailwindCSS setup file           |
 
-> Note: You should change default `DB_USERNAME`, `DB_PASSWORD`, `REDIS_PASSWORD` in `.env` file if use this Docker setup files
+> Note: This preset will change value of `DB_USERNAME`, `DB_PASSWORD`, `REDIS_PASSWORD` in `.env` and `.env.example`
 
 ## Changelog
 
