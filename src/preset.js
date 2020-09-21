@@ -113,6 +113,12 @@ module.exports = Preset.make('laravel')
   .title('Reformating `composer.json` file with indentation 2 spaces')
   .chain()
 
+  // Clean up
+  .delete()
+  .files(['/phpunit.xml', '/.styleci.yml'])
+  .title('Clean up')
+  .chain()
+
   // Update Node dependencies
   .installDependencies()
   .for('node')
@@ -122,5 +128,5 @@ module.exports = Preset.make('laravel')
   // Update PHP dependencies
   .installDependencies()
   .for('php')
-  .title('Update PHP dependencies')
+  .title('Install PHP dependencies')
   .chain()
