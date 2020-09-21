@@ -115,18 +115,18 @@ module.exports = Preset.make('laravel')
 
   // Update environment variables
   .edit(['.env', '.env.example'])
-  .replace(/^DB_USERNAME=.*$/)
+  .replace(/DB_USERNAME=.*/)
   .with('DB_USERNAME=dev')
-  .replace(/^DB_PASSWORD=.*$/)
+  .replace(/DB_PASSWORD=.*/)
   .with('DB_PASSWORD=devpass')
-  .replace(/^REDIS_PASSWORD=.*$/)
+  .replace(/REDIS_PASSWORD=.*/)
   .with('REDIS_PASSWORD=password')
   .title('Update some environment variables')
   .chain()
 
   // Clean up
   .delete()
-  .files(['/phpunit.xml', '/.styleci.yml'])
+  .files(['phpunit.xml', '.styleci.yml'])
   .title('Clean up')
   .chain()
 
