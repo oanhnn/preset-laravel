@@ -114,15 +114,9 @@ test:phpunit:
     DB_HOST:        mysql
   services:
     - name: mysql:8.0
-      command:
-        - mysqld
-        - --default-authentication-plugin=mysql_native_password
-        - --character-set-server=utf8mb4
-        - --collation-server=utf8mb4_unicode_ci
     - name: redis:alpine
       command:
         - redis-server
-        - --appendonly=yes
         - --requirepass=${REDIS_PASSWORD}
   before_script:
     - docker-php-ext-enable xdebug;
