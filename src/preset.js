@@ -69,6 +69,31 @@ module.exports = Preset.make('laravel')
   .if(({ flags }) => Boolean(flags.eslint))
   .chain()
 
+  // Install eslint
+  .editJson('package.json')
+  .merge({
+    scripts: {
+      lint: 'eslint . --ext .js,.vue',
+    },
+    devDependencies: {
+      '@vue/eslint-config-prettier': '^6.0.0',
+      'babel-eslint': '^10.0.3',
+      'eslint-plugin-vue': '^6.2.2',
+      'vue-eslint-parser': '^7.1.0',
+    },
+  })
+  .title('Install ESLint & Prettier for VueJS')
+  .if(({ flags }) => Boolean(flags.eslint && flags.vuejs))
+  .chain()
+
+  // Copy Eslint config
+  .copyDirectory('eslint-vue')
+  .to('/')
+  .whenConflict('override')
+  .title('Copy Eslint config files for VueJS')
+  .if(({ flags }) => Boolean(flags.eslint && flags.vuejs))
+  .chain()
+
   // Copy Docker config
   .copyDirectory('docker')
   .to('/')

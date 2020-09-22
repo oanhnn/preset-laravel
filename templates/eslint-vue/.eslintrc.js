@@ -5,19 +5,29 @@ module.exports = {
     node: true,
     es6: true,
   },
-  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
+  extends: ['eslint:recommended', '@vue/prettier'],
   globals: {
     // axios: true,
   },
+  parser: 'vue-eslint-parser',
   parserOptions: {
     ecmaVersion: 2018,
+    parser: 'babel-eslint',
     sourceType: 'module',
   },
-  plugins: ['prettier', 'simple-import-sort'],
+  plugins: ['vue', 'prettier', 'simple-import-sort'/*, 'jest'*/],
   rules: {
     'simple-import-sort/sort': 'error',
     'sort-imports': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
+  overrides: [
+    // {
+    //   files: ['*-test.js', '*.spec.js', '*-test.ts', '*.spec.ts'],
+    //   env: {
+    //     jest: true,
+    //   },
+    // },
+  ],
 }
