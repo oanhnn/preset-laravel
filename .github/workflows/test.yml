@@ -75,10 +75,10 @@ jobs:
       run: npx use-preset .. ${{ matrix.options }} --debug --no-interaction
       working-directory: ./ci-test
 
-    - name: Run lint
-      if: contains(matrix.options, '--eslint')
-      run: npm run lint
-      working-directory: ./ci-test
+    # - name: Run lint
+    #   if: contains(matrix.options, '--eslint')
+    #   run: npm run lint
+    #   working-directory: ./ci-test
 
     - name: Run coding style check
       if: contains(matrix.options, '--phpcs')
@@ -90,7 +90,9 @@ jobs:
       run: |
         docker-compose up -d
         sleep 20s
-        curl http://127.0.0.1/
+        chown -R `whoami`:82 bootstrap/cache storage
+        chmod -R g+w         bootstrap/cache storage
+        curl -I http://127.0.0.1/
         docker-compose down
       working-directory: ./ci-test
 
