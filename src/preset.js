@@ -87,6 +87,13 @@ module.exports = Preset.make('laravel')
   .if(({ flags }) => Boolean(flags.eslint) && Boolean(flags.vuejs))
   .chain()
 
+  .edit(['resources/js/app.js', 'resources/js/bootstrap.js'])
+  .replace(/;/)
+  .with('')
+  .title('Fix coding style for js files')
+  .if(({ flags }) => Boolean(flags.eslint))
+  .chain()
+
   // Copy Eslint config
   .copyDirectory('eslint-vue')
   .to('/')

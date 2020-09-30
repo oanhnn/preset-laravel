@@ -5,9 +5,9 @@ version: '3.5'
 # =========================================
 x-app-service: &app-service
   image: oanhnn/laravel:edge
-  build:
-    context: .
-    dockerfile: Dockerfile
+  # build:
+  #   context: .
+  #   dockerfile: .docker/php/Dockerfile
   depends_on:
     - mysql
     - redis

@@ -75,12 +75,6 @@ jobs:
       run: npx use-preset .. ${{ matrix.options }} --debug --no-interaction
       working-directory: ./ci-test
 
-    - name: Install dependencies
-      run: |
-        npm install
-        composer update
-      working-directory: ./ci-test
-
     - name: Run lint
       if: contains(matrix.options, '--eslint')
       run: npm run lint
