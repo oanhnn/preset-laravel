@@ -69,7 +69,7 @@ jobs:
         key: cache-dependencies
 
     - name: Create project with composer
-      run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test --prefer-dist
+      run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test
 
     - name: Apply preset
       run: npx use-preset .. ${{ matrix.options }} --debug --no-interaction

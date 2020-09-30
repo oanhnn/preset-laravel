@@ -15,19 +15,11 @@ module.exports = {
     parser: 'babel-eslint',
     sourceType: 'module',
   },
-  plugins: ['vue', 'prettier', 'simple-import-sort'/*, 'jest'*/],
+  plugins: ['vue', 'prettier', 'simple-import-sort'],
   rules: {
     'simple-import-sort/sort': 'error',
     'sort-imports': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
-  overrides: [
-    // {
-    //   files: ['*-test.js', '*.spec.js', '*-test.ts', '*.spec.ts'],
-    //   env: {
-    //     jest: true,
-    //   },
-    // },
-  ],
 }

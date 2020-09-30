@@ -10,15 +10,16 @@ $ npx use-preset https://github.com/oanhnn/preset-laravel.git
 
 Options:
 
-| Option          | Description                          |
-|:----------------|:-------------------------------------|
-| `--docker`      | Add Docker setup files               |
-| `--eslint`      | Add ESLint setup files               |
-| `--gitlab`      | Add Gitlab CI config file            |
-| `--github`      | Add Github Workflow setup files      |
-| `--phpcs`       | Add PHPCS default config file        |
-| `--vuejs`       | Add VueJS setup files                |
-| `--tailwindcss` | Add TailwindCSS setup file           |
+| Option             | Description                          |
+|:-------------------|:-------------------------------------|
+| `--docker`         | Add Docker setup files               |
+| `--eslint`         | Add ESLint setup files               |
+| `--gitlab`         | Add Gitlab CI config file            |
+| `--github`         | Add Github Workflow setup files      |
+| `--phpcs`          | Add PHPCS default config file        |
+| `--vuejs`          | Add VueJS setup files                |
+| `--tailwindcss`    | Add TailwindCSS setup file           |
+| `--no-interaction` | Run without interaction mode         |
 
 > Note: This preset will change value of `DB_USERNAME`, `DB_PASSWORD`, `REDIS_PASSWORD` in `.env` and `.env.example`
 

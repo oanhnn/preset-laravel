@@ -9,6 +9,7 @@ module.exports = Preset.make('laravel')
   .option('phpcs', false)
   .option('vuejs', false)
   .option('tailwindcss', false)
+  .option('interaction', true)
 
   // Copy all file from `default` directory to project's root
   .copyDirectory('default')
@@ -64,7 +65,7 @@ module.exports = Preset.make('laravel')
   // Copy Eslint config
   .copyDirectory('eslint')
   .to('/')
-  .whenConflict('override')
+  .whenConflict('ask')
   .title('Copy Eslint config files')
   .if(({ flags }) => Boolean(flags.eslint))
   .chain()
@@ -83,13 +84,13 @@ module.exports = Preset.make('laravel')
     },
   })
   .title('Install ESLint & Prettier for VueJS')
-  .if(({ flags }) => Boolean(flags.eslint && flags.vuejs))
+  .if(({ flags }) => Boolean(flags.eslint) && Boolean(flags.vuejs))
   .chain()
 
   // Copy Eslint config
   .copyDirectory('eslint-vue')
   .to('/')
-  .whenConflict('override')
+  .whenConflict('ask')
   .title('Copy Eslint config files for VueJS')
   .if(({ flags }) => Boolean(flags.eslint && flags.vuejs))
   .chain()
@@ -158,11 +159,13 @@ module.exports = Preset.make('laravel')
   // Update Node dependencies
   .installDependencies()
   .for('node')
+  .withoutAsking(({ flags }) => Boolean(flags.interaction))
   .title('Install Node dependencies')
   .chain()
 
   // Update PHP dependencies
   .installDependencies()
   .for('php')
+  .withoutAsking(({ flags }) => Boolean(flags.interaction))
   .title('Install PHP dependencies')
   .chain()
