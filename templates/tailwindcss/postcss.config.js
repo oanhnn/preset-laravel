@@ -15,4 +15,4 @@ module.exports = {
     require('postcss-nested'),
     require('autoprefixer'),
   ],
-};
+}

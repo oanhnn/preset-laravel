@@ -68,6 +68,9 @@ get:node-modules:
 check:security:
   stage: test
   needs: []
+  only:
+    changes:
+      - composer.lock
   before_script:
     - curl -OL https://get.sensiolabs.org/security-checker.phar
   script:
@@ -126,6 +129,7 @@ test:phpunit:
     - sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${MYSQL_DATABASE}|g" .env
     - sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|g" .env
     - php artisan key:generate
+    - php artisan migrate --force --seed
   script:
     - vendor/bin/phpunit --coverage-text --colors=never
   coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'

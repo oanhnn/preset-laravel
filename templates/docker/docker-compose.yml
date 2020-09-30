@@ -1,6 +1,25 @@
 version: '3.5'
 
 # =========================================
+# X-Templates
+# =========================================
+x-app-service: &app-service
+  image: oanhnn/laravel:edge
+  build:
+    context: .
+    dockerfile: Dockerfile
+  depends_on:
+    - mysql
+    - redis
+  environment:
+    REDIS_HOST:  redis
+    DB_HOST:     mysql
+    LOG_CHANNEL: stderr
+  restart: unless-stopped
+  volumes:
+    - .:/var/www
+
+# =========================================
 # Networks
 # =========================================
 networks:
@@ -87,53 +106,25 @@ services:
       - ./public:/var/www/public:ro
 
   php:
-    image: oanhnn/laravel:edge
-    depends_on:
-      - mysql
-      - redis
-    environment:
-      REDIS_HOST:  redis
-      DB_HOST:     mysql
-      LOG_CHANNEL: stderr
+    <<: *app-service
     networks:
       - mysql-net
       - redis-net
       - proxy-net
-    restart: unless-stopped
     volumes:
       - .:/var/www
       - .docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
 
   schedule:
-    image: oanhnn/laravel:edge
+    <<: *app-service
     command: artisan schedule:run --verbose --no-interaction --sleep=60
-    depends_on:
-      - mysql
-      - redis
-    environment:
-      REDIS_HOST:  redis
-      DB_HOST:     mysql
-      LOG_CHANNEL: stderr
     networks:
       - mysql-net
       - redis-net
-    restart: unless-stopped
-    volumes:
-      - .:/var/www
 
   horizon:
-    image: oanhnn/laravel:edge
+    <<: *app-service
     command: artisan queue:work
-    depends_on:
-      - mysql
-      - redis
-    environment:
-      REDIS_HOST:  redis
-      DB_HOST:     mysql
-      LOG_CHANNEL: stderr
     networks:
       - mysql-net
       - redis-net
-    restart: unless-stopped
-    volumes:
-      - .:/var/www

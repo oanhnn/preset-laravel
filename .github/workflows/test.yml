@@ -29,6 +29,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         options:
           - '--docker'
@@ -36,6 +37,7 @@ jobs:
           - '--gitlab'
           - '--github'
           - '--tailwindcss'
+          - '--eslint'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -66,6 +68,37 @@ jobs:
     - name: Apply preset
       run: npx use-preset .. ${{ matrix.options }}
       working-directory: ./ci-test
+
+    - name: Config environment
+      run: |
+        if [[ ! -f .env ]]; then
+          cp .env.example .env
+        fi
+        sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=password|g" .env
+        php artisan key:generate
+      working-directory: ./ci-test
+
+    - name: Run lint
+      if: contains(matrix.options, '--eslint')
+      run: npn run lint
+      working-directory: ./ci-test
+
+    - name: Run coding style check
+      if: contains(matrix.options, '--phpcs')
+      run: phpcs --standard=phpcs.xml.dist
+      working-directory: ./ci-test
+
+    - name: Run with docker
+      if: contains(matrix.options, '--docker')
+      run: |
+        docker-compose up -d
+        sleep 20s
+        curl http://127.0.0.1/
+        docker-compose down
+      working-directory: ./ci-test
+
+    - name: Run build assets
+      run: npm run production
 
     - name: Run tests in the generated project
       run: php artisan test

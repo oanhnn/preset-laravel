@@ -24,8 +24,8 @@ module.exports = Preset.make('laravel')
       '@tailwindcss/custom-forms': '^0.2',
       '@tailwindcss/ui': '^0.6',
       '@tailwindcss/typography': '^0.2',
-      'postcss-nested': '^4',
-      'postcss-import': '^12',
+      'postcss-nested': '^4.2',
+      'postcss-import': '^12.0',
       autoprefixer: '^9.8',
       tailwindcss: '^1.8',
     },
@@ -50,11 +50,11 @@ module.exports = Preset.make('laravel')
       'lint:fix': 'npm run lint -- --fix',
     },
     devDependencies: {
-      eslint: '^7.7.0',
-      'eslint-config-prettier': '^6.11.0',
-      'eslint-plugin-prettier': '^3.1.4',
-      'eslint-plugin-simple-import-sort': '^5.0.3',
-      prettier: '^2.0.5',
+      eslint: '^7.10',
+      'eslint-config-prettier': '^6.12',
+      'eslint-plugin-prettier': '^3.1',
+      'eslint-plugin-simple-import-sort': '^5.0',
+      prettier: '^2.1',
     },
   })
   .title('Install ESLint & Prettier')
@@ -76,10 +76,10 @@ module.exports = Preset.make('laravel')
       lint: 'eslint . --ext .js,.vue',
     },
     devDependencies: {
-      '@vue/eslint-config-prettier': '^6.0.0',
-      'babel-eslint': '^10.0.3',
-      'eslint-plugin-vue': '^6.2.2',
-      'vue-eslint-parser': '^7.1.0',
+      '@vue/eslint-config-prettier': '^6.0',
+      'babel-eslint': '^10.1',
+      'eslint-plugin-vue': '^6.2',
+      'vue-eslint-parser': '^7.1',
     },
   })
   .title('Install ESLint & Prettier for VueJS')

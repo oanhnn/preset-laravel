@@ -1,0 +1,42 @@
+# User specific & automatically generated files #
+#################################################
+.env.backup
+.git
+.gitignore
+.gitlab-ci.yml
+.phpunit.result.cache
+.rnd
+.vagrant
+*.log
+docker-compose.*
+storage/*.key
+docs
+node_modules
+public/hot
+public/storage
+Homestead.json
+Homestead.yaml
+LICENSE
+README.md
+phpcs.xml.dist
+phpcs.xml
+
+# IDE and editor specific files #
+#################################
+nbproject
+.idea
+.vscode
+.phpstorm.meta.php
+_ide_helper.php
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+*.mo
