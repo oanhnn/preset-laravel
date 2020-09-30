@@ -69,18 +69,9 @@ jobs:
       run: npx use-preset .. ${{ matrix.options }}
       working-directory: ./ci-test
 
-    - name: Config environment
-      run: |
-        if [[ ! -f .env ]]; then
-          cp .env.example .env
-        fi
-        sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=password|g" .env
-        php artisan key:generate
-      working-directory: ./ci-test
-
     - name: Run lint
       if: contains(matrix.options, '--eslint')
-      run: npn run lint
+      run: npm run lint
       working-directory: ./ci-test
 
     - name: Run coding style check
@@ -99,6 +90,7 @@ jobs:
 
     - name: Run build assets
       run: npm run production
+      working-directory: ./ci-test
 
     - name: Run tests in the generated project
       run: php artisan test
