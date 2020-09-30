@@ -73,14 +73,8 @@ jobs:
       run: npx use-preset .. ${{ matrix.options }} --debug --no-interaction
       working-directory: ./ci-test
 
-    # - name: Run lint
-    #   if: contains(matrix.options, '--eslint')
-    #   run: npm run lint
-    #   working-directory: ./ci-test
-
-    - name: Run coding style check
-      if: contains(matrix.options, '--phpcs')
-      run: phpcs --standard=phpcs.xml.dist
+    - name: Run tests in the generated project
+      run: php artisan test
       working-directory: ./ci-test
 
     - name: Run with docker
@@ -92,12 +86,4 @@ jobs:
         sudo chmod -R g+w         bootstrap/cache storage
         curl -I http://127.0.0.1/
         docker-compose down
-      working-directory: ./ci-test
-
-    # - name: Run build assets
-    #   run: npm run production
-    #   working-directory: ./ci-test
-
-    - name: Run tests in the generated project
-      run: php artisan test
       working-directory: ./ci-test
