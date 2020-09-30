@@ -33,12 +33,10 @@ jobs:
       matrix:
         options:
           - '--docker'
-          - '--vuejs'
-          - '--gitlab'
-          - '--github'
           - '--tailwindcss'
           - '--eslint'
           - '--eslint --vuejs'
+          - '--phpcs'
         laravel:
           - '^8.0'
         php:
@@ -90,15 +88,15 @@ jobs:
       run: |
         docker-compose up -d
         sleep 20s
-        chown -R `whoami`:82 bootstrap/cache storage
-        chmod -R g+w         bootstrap/cache storage
+        sudo chown -R `whoami`:82 bootstrap/cache storage
+        sudo chmod -R g+w         bootstrap/cache storage
         curl -I http://127.0.0.1/
         docker-compose down
       working-directory: ./ci-test
 
-    - name: Run build assets
-      run: npm run production
-      working-directory: ./ci-test
+    # - name: Run build assets
+    #   run: npm run production
+    #   working-directory: ./ci-test
 
     - name: Run tests in the generated project
       run: php artisan test
