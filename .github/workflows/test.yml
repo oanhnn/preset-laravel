@@ -38,6 +38,11 @@ jobs:
           - '--github'
           - '--tailwindcss'
           - '--eslint'
+          - '--eslint --vuejs'
+        laravel:
+          - '^8.0'
+        php:
+          - 7.4
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -45,9 +50,10 @@ jobs:
     - name: Setting up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 7.4
+        php-version: ${{ matrix.php }}
         extensions: curl, dom, json, mbstring, openssl
         tools: phpcs, composer, phpunit
+        coverage: none
 
     - name: Setting up NodeJS
       uses: actions/setup-node@v1
@@ -63,10 +69,16 @@ jobs:
         key: cache-dependencies
 
     - name: Create project with composer
-      run: composer create-project --prefer-dist laravel/laravel ./ci-test
+      run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test --prefer-dist
 
     - name: Apply preset
-      run: npx use-preset .. ${{ matrix.options }}
+      run: npx use-preset .. ${{ matrix.options }} --debug --no-interaction
+      working-directory: ./ci-test
+
+    - name: Install dependencies
+      run: |
+        npm install
+        composer update
       working-directory: ./ci-test
 
     - name: Run lint
