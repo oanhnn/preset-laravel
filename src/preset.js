@@ -79,7 +79,7 @@ module.exports = Preset.make('laravel')
     devDependencies: {
       '@vue/eslint-config-prettier': '^6.0',
       'babel-eslint': '^10.1',
-      'eslint-plugin-vue': '^6.2',
+      'eslint-plugin-vue': '^7.0',
       'vue-eslint-parser': '^7.1',
     },
   })
