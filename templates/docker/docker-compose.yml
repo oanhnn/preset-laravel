@@ -82,7 +82,7 @@ services:
     restart: unless-stopped
     volumes:
       - mysql-vol:/var/lib/mysql
-      # - .docker/mysql:/docker-entrypoint-initdb.d
+      # - .docker/mysql:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: MYSQL_PWD=$$MYSQL_PASSWORD mysqladmin -h mysql -P ${DB_PORT:-3306} -u $$MYSQL_USER --silent ping
       start_period: 2s

@@ -74,7 +74,7 @@ module.exports = Preset.make('laravel')
   .editJson('package.json')
   .merge({
     scripts: {
-      lint: 'eslint . --ext .js,.vue',
+      lint: 'eslint -c .eslintrc.js --ext .js,.vue .',
     },
     devDependencies: {
       '@vue/eslint-config-prettier': '^6.0',

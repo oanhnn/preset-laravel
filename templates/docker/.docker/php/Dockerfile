@@ -1,7 +1,7 @@
 # ========================
 # Get backend vendors
 # ========================
-FROM composer as vendor
+FROM composer AS vendor
 
 WORKDIR /var/www
 
@@ -20,7 +20,7 @@ RUN composer install  \
 # ========================
 # Build frontend assets
 # ========================
-FROM node:12-alpine as frontend
+FROM node:12-alpine AS frontend
 
 RUN apk add --update --no-cache git build-base
 
@@ -28,7 +28,7 @@ WORKDIR /var/www
 
 COPY package*.json ./
 
-RUN npm ci --slient
+RUN npm ci --silent
 
 COPY webpack.mix.js ./
 COPY resources      ./resources
