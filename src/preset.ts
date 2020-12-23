@@ -87,7 +87,7 @@ Preset.group((preset) => {
 
 // Eslint
 Preset.group((preset) => {
-  let extensions = ['.js']
+  const extensions = ['.js']
   let devDependencies: Record<string, string> = {
     eslint: '^7.16',
     'eslint-config-prettier': '^7.1',

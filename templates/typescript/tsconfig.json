@@ -19,13 +19,12 @@
     "lib": [
       "esnext",
       "dom",
-      "dom.iterable",
-    ],
+      "dom.iterable"
+    ]
   },
   "include": [
     "resource/**/*.ts",
-    "resource/**/*.tsx",
-    "resource/**/*.vue",
+    "resource/**/*.vue"
   ],
   "exclude": [
     "node_modules"
