@@ -11,7 +11,7 @@ stages:
 # Define global defaults
 #========================
 default:
-  image: oanhnn/laravel:edge
+  image: oanhnn/laravel:latest
 
 #========================
 # Define global variables
@@ -28,7 +28,6 @@ get:vendors:
   image: composer
   before_script:
     - composer config -g cache-dir "$(pwd)/composer-cache"
-    - composer global require hirak/prestissimo
   script:
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --ignore-platform-reqs
   cache:
@@ -50,7 +49,8 @@ get:node-modules:
   needs: []
   image: node:12-alpine
   script:
-    - npm ci
+    - apk add --update --no-cache git build-base
+    - npm ci --quiet
   cache:
     key:
       prefix: ${CI_JOB_NAME}
@@ -127,7 +127,7 @@ test:phpunit:
     - sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${MYSQL_USER}|g" .env
     - sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${MYSQL_PASSWORD}|g" .env
     - sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${MYSQL_DATABASE}|g" .env
-    - sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|g" .env
+    # - sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|g" .env
     - php artisan key:generate
     - php artisan migrate --force --seed
   script:
@@ -152,6 +152,31 @@ build:assets:
       - public/
     expire_in: 1 days
     when: on_success
+
+build:docker-image:
+  stage: build
+  needs: []
+  image: docker:stable
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: '/certs'
+  before_script:
+    - export CI_BUILD_SHA=${CI_COMMIT_SHA:0:8}
+    - docker info
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
+        export IMAGE_TAG=latest;
+      else
+        export IMAGE_TAG=$CI_COMMIT_REF_SLUG;
+      fi
+  script:
+    - export IMAGE_CACHE_TAG=$IMAGE_TAG
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_CACHE_TAG || export IMAGE_CACHE_TAG=latest
+    - docker build --cache-from $CI_REGISTRY_IMAGE:$IMAGE_CACHE_TAG -t $CI_REGISTRY_IMAGE:$CI_BUILD_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_SHA $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
 
 production:
   stage: deploy

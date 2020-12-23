@@ -14,6 +14,7 @@ vendor
 .vagrant
 Homestead.json
 Homestead.yaml
+docker-compose.override.yml
 .env
 .env.backup
 .rnd

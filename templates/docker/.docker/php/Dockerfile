@@ -28,7 +28,7 @@ WORKDIR /var/www
 
 COPY package*.json ./
 
-RUN npm ci --silent
+RUN npm ci --quiet
 
 COPY webpack.mix.js ./
 COPY resources      ./resources
@@ -40,7 +40,7 @@ RUN set -eux; \
 # ========================
 # Build app image
 # ========================
-FROM oanhnn/laravel:edge
+FROM oanhnn/laravel:1.0
 
 COPY                 .                         /var/wwww
 COPY --from=vendor   /var/wwww/vendor          /var/wwww/vendor

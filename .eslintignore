@@ -1,6 +1,9 @@
+# Dependencies
 node_modules/**/*
+
+# Templates
+templates/**/*
+
+# Config
 *.config.js
 *rc.js
-
-# All template file
-templates/**/*

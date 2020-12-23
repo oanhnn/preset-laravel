@@ -3,22 +3,39 @@ name: Test preset
 on: [push]
 
 jobs:
+  # Test with test code
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 12
+          - 14
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Cache
+    - name: Setting up NodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+
+    - name: Get npm cache directory path
+      id: npm-cache-dir-path
+      run: echo "::set-output name=dir::$(npm config get cache)"
+
+    - name: Cache dependencies
+      id: npm-cache
       uses: actions/cache@v2
       with:
-        path: |
-          ~/.npm
-          ~/.composer
-        key: cache-dependencies
+        path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
 
     - name: Install dependencies
-      run: yarn --frozen-lockfile
+      run: npm ci
 
     - name: Run lint
       run: npm run lint
@@ -26,6 +43,7 @@ jobs:
     - name: Run tests
       run: npm test
 
+  # Test with generated projecte
   generate:
     runs-on: ubuntu-latest
     strategy:
@@ -33,44 +51,80 @@ jobs:
       matrix:
         options:
           - '--docker'
-          - '--tailwindcss'
           - '--eslint'
-          - '--eslint --vuejs'
+          - '--eslint --vue2'
+          - '--eslint --vue3'
           - '--phpcs'
         laravel:
           - '^8.0'
         php:
           - 7.4
+        node:
+          - 12
+          - 14
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Setting up PHP
-      uses: shivammathur/setup-php@v2
+    - name: Setup cache environment
+      id: cache-env
+      uses: shivammathur/cache-extensions@v1
       with:
         php-version: ${{ matrix.php }}
         extensions: curl, dom, json, mbstring, openssl
-        tools: phpcs, composer, phpunit
+        key: cache-v1 # can be any string, change to clear the extension cache.
+
+    - name: Cache extensions
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.cache-env.outputs.dir }}
+        key: ${{ steps.cache-env.outputs.key }}
+        restore-keys: ${{ steps.cache-env.outputs.key }}
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
         coverage: none
+        extensions: curl, dom, json, mbstring, openssl
+        tools: phpcs, composer
+
+    - name: Setup cache dependencies
+      id: composer-cache-dir-path
+      run: echo "::set-output name=dir::$(composer config -g cache-files-dir)"
+
+    - name: Cache dependencies
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.composer-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-composer-L${{ matrix.laravel }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
 
     - name: Setting up NodeJS
       uses: actions/setup-node@v1
       with:
-        node-version: 12
+        node-version: ${{ matrix.node }}
 
-    - name: Cache
+    - name: Get npm cache directory path
+      id: npm-cache-dir-path
+      run: echo "::set-output name=dir::$(npm config get cache)"
+
+    - name: Cache dependencies
+      id: npm-cache
       uses: actions/cache@v2
       with:
-        path: |
-          ~/.npm
-          ~/.composer
-        key: cache-dependencies
+        path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
 
     - name: Create project with composer
       run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test
 
     - name: Apply preset
-      run: npx use-preset .. ${{ matrix.options }} --debug --no-interaction
+      run: npx apply ./.. ${{ matrix.options }} --debug --no-interaction
       working-directory: ./ci-test
 
     - name: Run tests in the generated project

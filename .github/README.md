@@ -5,7 +5,7 @@
 ```shell
 $ composer create-project laravel/laravel /path/to/project
 $ cd /path/to/project
-$ npx use-preset https://github.com/oanhnn/preset-laravel.git
+$ npx apply https://github.com/oanhnn/preset-laravel.git
 ```
 
 Options:
@@ -17,11 +17,11 @@ Options:
 | `--gitlab`         | Add Gitlab CI config file            |
 | `--github`         | Add Github Workflow setup files      |
 | `--phpcs`          | Add PHPCS default config file        |
-| `--vuejs`          | Add VueJS setup files                |
-| `--tailwindcss`    | Add TailwindCSS setup file           |
+| `--vue2`           | Add Vue2  setup files                |
+| `--vue3`           | Add Vue3  setup files                |
 | `--no-interaction` | Run without interaction mode         |
 
-> Note: This preset will change value of `DB_USERNAME`, `DB_PASSWORD`, `REDIS_PASSWORD` in `.env` and `.env.example`
+> Note: This preset may be change value of some environment variables in `.env` and `.env.example`
 
 ## Changelog
 
