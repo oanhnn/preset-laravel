@@ -31,7 +31,7 @@ Pull requests for bugs may be sent without creating any proposal issue. If you b
 
 ## Coding Standards
 
-Make sure the source code passed the lint checker before committing it by command `yarn lint` and `yarn lint:fix`. If you notice any compliance oversights, please send a patch via pull request.
+Make sure the source code passed the lint checker before committing it by command `npm run lint` and `npm run lint:fix`. If you notice any compliance oversights, please send a patch via pull request.
 
 
 ## Feature Requests
