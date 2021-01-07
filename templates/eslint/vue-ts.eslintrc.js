@@ -8,11 +8,15 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:import/recommended',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
   globals: {
     // axios: true,
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
@@ -20,6 +24,7 @@ module.exports = {
   plugins: [
     'import',
     'prettier',
+    '@typescript-eslint',
   ],
   rules: {
     'import/order': 'error',
@@ -29,6 +34,7 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
+      typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
       alias: {
         map: [
           ['@', './resources/js'],

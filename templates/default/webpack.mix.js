@@ -1,5 +1,4 @@
 const mix = require('laravel-mix')
-const { plugins } = require('./postcss.config')
 
 /*
  |--------------------------------------------------------------------------
@@ -15,9 +14,9 @@ const { plugins } = require('./postcss.config')
 mix
   .disableNotifications()
   .js('resources/js/app.js', 'public/js')
-  .postCss('resources/css/app.css', 'public/css', plugins)
+  .postCss('resources/css/app.css', 'public/css')
   .sourceMaps()
 
-if (mix.inProduction()) {
-  mix.version()
-}
+// if (mix.inProduction()) {
+//   mix.version()
+// }

@@ -19,7 +19,6 @@ Options:
 | `--phpcs`          | Add PHPCS default config file        |
 | `--vue2`           | Add Vue 2 setup files                |
 | `--vue3`           | Add Vue 3 setup files                |
-| `--mix6`           | Add Laravel Mix 6 setup files        |
 | `--typescript`     | Add Typescript setup files           |
 | `--no-interaction` | Run without interaction mode         |
 

@@ -12,21 +12,15 @@ Preset.option('docker', false)
   .option('phpcs', false)
   .option('vue2', false)
   .option('vue3', false)
-  .option('mix6', false)
   .option('typescript', false)
 
-Preset.hook(({ targetDirectory, options }) => {
+Preset.hook(({ targetDirectory }) => {
   // Make backup .env file
   if (fs.existsSync(path.join(targetDirectory, '.env'))) {
     fs.copyFileSync(
       path.join(targetDirectory, '.env'),
       path.join(targetDirectory, '.env.bak' + new Date().getTime())
     )
-  }
-
-  // Option vue3 require mix6
-  if (options.vue3) {
-    options.mix6 = true
   }
 })
 
@@ -57,39 +51,40 @@ Preset.group((preset) => {
   .withTitle('Install Typescript')
   .ifOptionEquals('typescript', true)
 
-// TODO: Install Vue 2
-
-// TODO: Install Vue 3
-
-// Laravel Mix 6
+// Install Vue 2
 Preset.group((preset) => {
-  // Install Laravel Mix and update npm scripts
   preset.editNodePackages().merge({
-    scripts: {
-      development: 'mix',
-      watch: 'mix watch',
-      'watch-poll': 'mix watch -- --watch-options-poll=1000',
-      hot: 'mix --hot',
-      production: 'mix --production',
-    },
     devDependencies: {
-      'laravel-mix': '^6.0.2',
+      vue: '^2.6',
+      'vue-template-compiler': '^2.6',
     },
   })
-
-  // Override webpack.mix.js
-  preset
-    .extract('mix')
-    .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 })
-  .withTitle('Install Laravel Mix 6')
-  .ifOptionEquals('mix6', true)
+  .withTitle('Install Vue 2')
+  .ifOptionEquals('vue2', true)
+
+// Install Vue 3
+Preset.group((preset) => {
+  preset
+    .editNodePackages()
+    .delete(['vue', 'vue-template-compiler', 'vue-loader'])
+    .merge({
+      devDependencies: {
+        vue: '^3.0',
+        '@vue/compiler-sfc': '^3.0',
+        'vue-loader': '^16.1',
+      },
+    })
+})
+  .withTitle('Install Vue 3')
+  .ifOptionEquals('vue3', true)
 
 // Eslint
 Preset.group((preset) => {
   const extensions = ['.js']
+  const stacks = []
   let devDependencies: Record<string, string> = {
-    eslint: '^7.16',
+    eslint: '^7.17',
     'eslint-config-prettier': '^7.1',
     'eslint-import-resolver-alias': '^1.1',
     'eslint-plugin-import': '^2.22',
@@ -97,20 +92,23 @@ Preset.group((preset) => {
     prettier: '^2.2',
   }
 
-  if (preset.options.typescript) {
-    extensions.push('.ts')
-    devDependencies = {
-      ...devDependencies,
-      '@typescript-eslint/eslint-plugin': '^4.11',
-      '@typescript-eslint/parser': '^4.11',
-    }
-  }
-
   if (preset.options.vue2 || preset.options.vue3) {
     extensions.push('.vue')
+    stacks.push('vue')
     devDependencies = {
       ...devDependencies,
       'eslint-plugin-vue': '^7.3',
+    }
+  }
+
+  if (preset.options.typescript) {
+    extensions.push('.ts')
+    stacks.push('ts')
+    devDependencies = {
+      ...devDependencies,
+      'eslint-import-resolver-typescript': '^2.3',
+      '@typescript-eslint/eslint-plugin': '^4.11',
+      '@typescript-eslint/parser': '^4.11',
     }
   }
 
@@ -124,30 +122,26 @@ Preset.group((preset) => {
   })
 
   preset
-    .extract('eslint')
+    .extract(['eslint/.eslintignore', 'eslint/.prettierrc.js'])
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
   preset
-    .edit('.eslint.js')
-    .if(preset.options.vue2)
-    .addAfter("'plugin:import/recommended',", "'plugin:vue/recommended',")
-    .withIndent(2)
+    .extract()
+    .from(`eslint/${stacks.join('-')}.eslintrc.js`)
+    .to('.eslintrc.js')
+    .withDots(true)
+    .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
   preset
-    .edit('.eslint.js')
-    .if(preset.options.vue2)
-    .addAfter("'plugin:import/recommended',", "'plugin:vue/vue3-recommended',")
-    .withIndent(2)
-
-  preset
-    .edit('.eslint.js')
-    .if(preset.options.typescript)
-    .addBefore(
-      "'plugin:import/recommended',",
-      "'@typescript-eslint/recommended',"
-    )
-    .withIndent(2)
+    .edit('.eslintrc.js')
+    .update((content) => {
+      return content.replace(
+        "'plugin:vue/recommended',",
+        "'plugin:vue/vue3-recommended',"
+      )
+    })
+    .ifOptionEquals('vue3', true)
 })
   .withTitle('Install ESlint')
   .ifOptionEquals('eslint', true)
