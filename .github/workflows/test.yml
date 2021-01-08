@@ -5,7 +5,7 @@ on: [push]
 jobs:
   # Test with test code
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -45,7 +45,7 @@ jobs:
 
   # Test with generated projecte
   generate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -54,11 +54,16 @@ jobs:
           - '--eslint'
           - '--eslint --vue2'
           - '--eslint --vue3'
+          - '--eslint --vue3 --typescript'
+          - '--gitlab'
+          - '--github'
           - '--phpcs'
+          - '--typescript'
         laravel:
           - '^8.0'
         php:
           - 7.4
+          - 8.0
         node:
           - 12
           - 14
