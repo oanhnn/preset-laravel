@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   check-sercurity:
     name: '[PHP] Check security'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
 
   check-coding-style:
     name: '[PHP] Check coding style'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
         php:
           - 7.3
           - 7.4
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     services:
       mysql:
         image: mysql:8.0

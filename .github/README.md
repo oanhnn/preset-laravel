@@ -33,8 +33,8 @@ See all change logs in [CHANGELOG](CHANGELOG.md)
 ```shell
 $ git clone git@github.com/oanhnn/preset-laravel.git /path
 $ cd /path
-$ yarn
-$ yarn lint
+$ npm ci
+$ npm run lint
 ```
 
 ## Contributing

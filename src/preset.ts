@@ -41,7 +41,9 @@ Preset.env('.env')
 // Install Typescript
 Preset.group((preset) => {
   preset.editNodePackages().merge({
-    typescript: '^4.0',
+    devDependencies: {
+      typescript: '^4.0',
+    },
   })
 
   preset

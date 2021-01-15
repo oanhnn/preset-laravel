@@ -11,10 +11,9 @@ x-app-service: &app-service
   depends_on:
     - mysql
     - redis
-  environment:
-    REDIS_HOST:  redis
-    DB_HOST:     mysql
-    LOG_CHANNEL: stderr
+  env_file:
+    - .env
+    - docker-compose.env
   restart: unless-stopped
   volumes:
     - .:/var/www
