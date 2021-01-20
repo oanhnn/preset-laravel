@@ -2,12 +2,13 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    node: true,
     es6: true,
+    node: true,
   },
   extends: [
-    'eslint:recommended',
+    'plugin:vue/vue-recommended',
     'plugin:import/recommended',
+    'eslint:recommended',
     'plugin:prettier/recommended',
   ],
   globals: {
@@ -20,6 +21,7 @@ module.exports = {
   plugins: [
     'import',
     'prettier',
+    'vue',
   ],
   rules: {
     'import/order': 'error',
