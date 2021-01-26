@@ -48,6 +48,7 @@ Preset.group((preset) => {
 
   preset
     .extract('typescript')
+    .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 })
   .withTitle('Install Typescript')
@@ -150,24 +151,28 @@ Preset.group((preset) => {
 
 // Docker
 Preset.extract('docker')
+  .withDots(true)
   .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
   .withTitle('Copy Docker config files')
   .ifOptionEquals('docker', true)
 
 // GitHub
 Preset.extract('github')
+  .withDots(true)
   .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
   .withTitle('Copy Github config files')
   .ifOptionEquals('github', true)
 
 // Gitlab
 Preset.extract('gitlab')
+  .withDots(true)
   .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
   .withTitle('Copy Gitlab config files')
   .ifOptionEquals('gitlab', true)
 
 // PHPCS
 Preset.extract('phpcs')
+  .withDots(true)
   .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
   .withTitle('Copy PHPCS config file')
   .ifOptionEquals('phpcs')
