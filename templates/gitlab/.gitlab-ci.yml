@@ -42,7 +42,7 @@
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG;
 
     # Deploy
-    - ssh $SSH_USER@$SSH_HOST 'cd /apps/weekly; docker-compose up -d'
+    - ssh $SSH_USER@$SSH_HOST 'cd /apps/laravel; docker-compose up -d'
 
 #========================
 # Define pipeline stages

@@ -17,7 +17,6 @@ x-app-service: &app-service
   restart: unless-stopped
   volumes:
     - .:/var/www
-    # - .docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
 
 # =========================================
 # Networks
@@ -40,7 +39,7 @@ volumes:
 services:
   redis:
     image: redis:alpine
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-password} --bind 0.0.0.0 --port ${REDIS_PORT:-6379}
+    command: redis-server --appendonly yes --bind 0.0.0.0 --port ${REDIS_PORT:-6379}
     networks:
       - redis-net
     ports:
@@ -49,7 +48,7 @@ services:
     volumes:
       - redis-vol:/data
     healthcheck:
-      test: REDISCLI_AUTH=${REDIS_PASSWORD:-password} redis-cli -h redis -p ${REDIS_PORT:-6379} ping
+      test: PING=$$(redis-cli -h `hostname -i` -p 6379 ping) && [ "$$PING" == "PONG" ]
       start_period: 1s
       interval: 1s
       timeout: 3s
@@ -72,7 +71,7 @@ services:
       - mysql-vol:/var/lib/mysql
       # - .docker/mysql:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: MYSQL_PWD=$${MYSQL_PASSWORD} mysqladmin -h mysql -P ${DB_PORT:-3306} -u $${MYSQL_USER} --silent ping
+      test: MYSQL_PWD=$${MYSQL_PASSWORD} mysqladmin -h `hostname -i` -P ${DB_PORT:-3306} -u $${MYSQL_USER} --silent ping
       start_period: 2s
       interval: 1s
       timeout: 3s
@@ -106,6 +105,9 @@ services:
       - mysql-net
       - redis-net
       - proxy-net
+    volumes:
+      - .:/var/www
+      - .docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
 
   schedule:
     <<: *app-service

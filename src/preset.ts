@@ -34,7 +34,7 @@ Preset.extract('default')
 Preset.env('.env')
   .set('DB_USERNAME', 'dev')
   .set('DB_PASSWORD', 'devpass')
-  .set('REDIS_PASSWORD', 'password')
+  .set('REDIS_PASSWORD', 'null')
   .createIfMissing()
   .withTitle('Update .env file')
 
@@ -125,13 +125,19 @@ Preset.group((preset) => {
   })
 
   preset
-    .extract(['eslint/.eslintignore', 'eslint/.prettierrc.js'])
+    .extract('eslint/.eslintignore')
+    .to('.prettierrc.js')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
   preset
-    .extract()
-    .from(`eslint/${stacks.join('-')}.eslintrc.js`)
+    .extract('eslint/.prettierrc.js')
+    .to('.prettierrc.js')
+    .withDots(true)
+    .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
+
+  preset
+    .extract(`eslint/${stacks.join('-')}.eslintrc.js`)
     .to('.eslintrc.js')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
