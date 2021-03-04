@@ -1,0 +1,26 @@
+name: build
+
+on:
+  release: {}
+
+jobs:
+  build-assets:
+    name: 'Build assets'
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setting up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.OS }}-node-
+      - name: Install dependencies with npm
+        run: npm ci
+      - name: Build assets
+        run: npm run production

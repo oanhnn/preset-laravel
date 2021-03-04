@@ -11,7 +11,7 @@ module.exports = {
     'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
-    'plugin:prettier/recommended',
+    'prettier',
   ],
   globals: {
     // axios: true,
@@ -35,12 +35,6 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
-      alias: {
-        map: [
-          ['@', './resources/js'],
-        ],
-        extensions: ['.js', '.json'],
-      },
     },
   },
 }

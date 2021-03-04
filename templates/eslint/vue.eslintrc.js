@@ -6,10 +6,10 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:vue/vue-recommended',
+    'plugin:vue/recommended',
     'plugin:import/recommended',
-    'eslint:recommended',
-    'plugin:prettier/recommended',
+    '@vue/standard',
+    '@vue/prettier/recommended',
   ],
   globals: {
     // axios: true,
@@ -20,14 +20,11 @@ module.exports = {
   },
   plugins: [
     'import',
-    'prettier',
-    'vue',
   ],
   rules: {
     'import/order': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'prettier/prettier': 'warn',
   },
   settings: {
     'import/resolver': {
@@ -35,7 +32,7 @@ module.exports = {
         map: [
           ['@', './resources/js'],
         ],
-        extensions: ['.js', '.json'],
+        extensions: ['.js', '.vue', '.json'],
       },
     },
   },

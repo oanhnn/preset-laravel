@@ -2,7 +2,7 @@
 <ruleset
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
-    name="My coding standard"
+    name="Rabiloo's PHP coding standard"
 >
     <description>This standard extends PSR-12</description>
 

@@ -2,16 +2,16 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   purge: [
+    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+    './storage/framework/views/*.php',
+    './resources/view/**/*.blade.php',
     './public/**/*.php',
     './public/**/*.html',
-    './resources/**/*.html',
-    './resources/**/*.js',
-    './resources/**/*.jsx',
-    './resources/**/*.ts',
-    './resources/**/*.tsx',
-    './resources/**/*.blade.php',
-    './resources/**/*.vue',
-    './resources/**/*.twig',
+    './resources/js/**/*.js',
+    './resources/js/**/*.jsx',
+    './resources/js/**/*.ts',
+    './resources/js/**/*.tsx',
+    './resources/js/**/*.vue',
   ],
   darkMode: 'media', // boolean or 'media' or 'class'
   theme: {
@@ -29,7 +29,7 @@ module.exports = {
   },
 
   plugins: [
-    // require('@tailwindcss/forms'),
-    // require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
   ],
 }

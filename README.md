@@ -13,16 +13,15 @@ Options:
 | Option             | Description                          |
 |:-------------------|:-------------------------------------|
 | `--docker`         | Add Docker setup files               |
-| `--eslint`         | Add ESLint setup files               |
 | `--gitlab`         | Add Gitlab CI config file            |
 | `--github`         | Add Github Workflow setup files      |
 | `--phpcs`          | Add PHPCS default config file        |
+| `--tailwind`       | Add TailwindCSS setup files          |
+| `--typescript`     | Add Typescript setup files           |
 | `--vue2`           | Add Vue 2 setup files                |
 | `--vue3`           | Add Vue 3 setup files                |
-| `--typescript`     | Add Typescript setup files           |
+| `--no-default`     | Run without default tasks            |
 | `--no-interaction` | Run without interaction mode         |
-
-> Note: This preset may be change value of some environment variables in `.env` and `.env.example`
 
 ## Changelog
 
@@ -39,7 +38,7 @@ $ npm run lint
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Security
 

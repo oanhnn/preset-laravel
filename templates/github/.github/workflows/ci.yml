@@ -1,27 +1,33 @@
 name: ci
 
-on: [push, pull_request]
+on:
+  push: {}
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
   check-sercurity:
-    name: '[PHP] Check security'
+    name: 'Check security'
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setting up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Setup cache the vulnerabilities DB
+        uses: actions/cache@v2
+        id: cache-db
         with:
-          php-version: 7.4
-          extensions: curl, json
-      - name: Run check security
-        run: |
-          wget -L -O security-checker https://github.com/fabpot/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64
-          chmod a+x security-checker
-          ./security-checker
+          path: ~/.symfony/cache
+          key: db
+      - name: Check the vulnerabilities
+        uses: symfonycorp/security-checker-action@v2
+        id: security-check
+      - name: Display the vulnerabilities as JSON
+        run: echo ${{ steps.security-check.outputs.vulns }}
 
   check-coding-style:
-    name: '[PHP] Check coding style'
+    name: 'Check coding style'
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -35,12 +41,12 @@ jobs:
         run: phpcs --standard=phpcs.xml.dist
 
   run-tests:
-    name: '[PHP] Test with PHP${{ matrix.php }}'
+    name: 'Test with PHP${{ matrix.php }}'
     strategy:
       matrix:
         php:
-          - 7.3
           - 7.4
+          - 8.0
     runs-on: ubuntu-20.04
     services:
       mysql:
@@ -87,8 +93,8 @@ jobs:
       - name: Run PHPUnit
         run: php artisan test
 
-  build-assets:
-    name: '[Node] Build assets'
+  check-assets:
+    name: 'Check assets'
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -96,7 +102,7 @@ jobs:
       - name: Setting up Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 14
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:

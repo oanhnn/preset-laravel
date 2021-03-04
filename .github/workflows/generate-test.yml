@@ -1,71 +1,35 @@
-name: Test preset
+name: Test generate
 
-on: [push]
+on:
+  push: {}
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
-  # Test with test code
   test:
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        node:
-          - 12
-          - 14
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Setting up NodeJS
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node }}
-
-    - name: Get npm cache directory path
-      id: npm-cache-dir-path
-      run: echo "::set-output name=dir::$(npm config get cache)"
-
-    - name: Cache dependencies
-      id: npm-cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run lint
-      run: npm run lint
-
-    - name: Run tests
-      run: npm test
-
-  # Test with generated projecte
-  generate:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
         options:
           - '--docker'
+          - '--github'
+          - '--gitlab'
+          - '--phpcs'
+          - '--tailwind --no-default'
           - '--eslint'
+          - '--eslint --typescript'
           - '--eslint --vue2'
           - '--eslint --vue3'
           - '--eslint --vue3 --typescript'
-          - '--gitlab'
-          - '--github'
-          - '--phpcs'
-          - '--typescript'
         laravel:
           - '^8.0'
         php:
           - 7.4
           - 8.0
         node:
-          - 12
           - 14
     steps:
     - name: Checkout
