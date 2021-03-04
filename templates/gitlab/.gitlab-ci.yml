@@ -15,6 +15,7 @@
 .php-job:
   image: oanhnn/laravel:latest
   before_script:
+    - wget https://getcomposer.org/installer -O - -q | php -- --quiet --install-dir=/usr/local/bin --filename=composer
     - composer config -g cache-dir "$(pwd)/composer-cache"
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --ignore-platform-reqs
   cache:
@@ -88,6 +89,9 @@ test:phpunit:
     REDIS_PASSWORD: password
     REDIS_HOST:     redis
     DB_HOST:        mysql
+    DB_USERNAME:    dev
+    DB_PASSWORD:    devpass
+    DB_DATABASE:    laravel
   services:
     - name: mysql:8.0
     - name: redis:alpine
@@ -97,10 +101,6 @@ test:phpunit:
   script:
     - docker-php-ext-enable xdebug;
     - cp .env.example .env
-    - sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${MYSQL_USER}|g" .env
-    - sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${MYSQL_PASSWORD}|g" .env
-    - sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${MYSQL_DATABASE}|g" .env
-    # - sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|g" .env
     - php artisan key:generate
     - php artisan migrate --force --seed
     - vendor/bin/phpunit --coverage-text --colors=never

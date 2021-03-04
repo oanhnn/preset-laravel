@@ -103,10 +103,8 @@ jobs:
     - name: Run with docker
       if: contains(matrix.options, '--docker')
       run: |
-        docker-compose up -d
+        vendor/bin/sail up -d
         sleep 20s
-        sudo chown -R `whoami`:82 bootstrap/cache storage
-        sudo chmod -R g+w         bootstrap/cache storage
         curl --silent --show-error --fail http://127.0.0.1/
-        docker-compose down
+        vendor/bin/sail down
       working-directory: ./ci-test
