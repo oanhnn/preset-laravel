@@ -32,79 +32,79 @@ jobs:
         node:
           - 14
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Setup cache environment
-      id: cache-env
-      uses: shivammathur/cache-extensions@v1
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: curl, dom, json, mbstring, openssl
-        key: cache-v1 # can be any string, change to clear the extension cache.
+      - name: Setup cache environment
+        id: cache-env
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, json, mbstring, openssl
+          key: cache-v1 # can be any string, change to clear the extension cache.
 
-    - name: Cache extensions
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.cache-env.outputs.dir }}
-        key: ${{ steps.cache-env.outputs.key }}
-        restore-keys: ${{ steps.cache-env.outputs.key }}
+      - name: Cache extensions
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.cache-env.outputs.dir }}
+          key: ${{ steps.cache-env.outputs.key }}
+          restore-keys: ${{ steps.cache-env.outputs.key }}
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        coverage: none
-        extensions: curl, dom, json, mbstring, openssl
-        tools: phpcs, composer
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: curl, dom, json, mbstring, openssl
+          tools: phpcs, composer
 
-    - name: Setup cache dependencies
-      id: composer-cache-dir-path
-      run: echo "::set-output name=dir::$(composer config -g cache-files-dir)"
+      - name: Setup cache dependencies
+        id: composer-cache-dir-path
+        run: echo "::set-output name=dir::$(composer config -g cache-files-dir)"
 
-    - name: Cache dependencies
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.composer-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-composer-L${{ matrix.laravel }}
-        restore-keys: |
-          ${{ runner.os }}-composer-
+      - name: Cache dependencies
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-composer-L${{ matrix.laravel }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
-    - name: Setting up NodeJS
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node }}
+      - name: Setting up NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
 
-    - name: Get npm cache directory path
-      id: npm-cache-dir-path
-      run: echo "::set-output name=dir::$(npm config get cache)"
+      - name: Get npm cache directory path
+        id: npm-cache-dir-path
+        run: echo "::set-output name=dir::$(npm config get cache)"
 
-    - name: Cache dependencies
-      id: npm-cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
+      - name: Cache dependencies
+        id: npm-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
-    - name: Create project with composer
-      run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test
+      - name: Create project with composer
+        run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test
 
-    - name: Apply preset
-      run: npx apply ./.. ${{ matrix.options }} --debug --no-interaction
-      working-directory: ./ci-test
+      - name: Apply preset
+        run: npx apply ./.. ${{ matrix.options }} --debug --no-interaction
+        working-directory: ./ci-test
 
-    - name: Run tests in the generated project
-      run: php artisan test
-      working-directory: ./ci-test
+      - name: Run tests in the generated project
+        run: php artisan test
+        working-directory: ./ci-test
 
-    - name: Run with docker
-      if: contains(matrix.options, '--docker')
-      run: |
-        vendor/bin/sail up -d
-        sleep 20s
-        curl --silent --show-error --fail http://127.0.0.1/
-        vendor/bin/sail down
-      working-directory: ./ci-test
+      - name: Run with docker
+        if: contains(matrix.options, '--docker')
+        run: |
+          vendor/bin/sail up -d
+          sleep 20s
+          curl --silent --show-error --fail http://127.0.0.1/
+          vendor/bin/sail down
+        working-directory: ./ci-test

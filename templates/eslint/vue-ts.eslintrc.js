@@ -21,9 +21,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: [
-    'import',
-  ],
+  plugins: ['import'],
   rules: {
     'import/order': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',

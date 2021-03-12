@@ -5,11 +5,7 @@ module.exports = {
     es6: true,
     node: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:import/recommended',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
   globals: {
     // axios: true,
   },
@@ -17,10 +13,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: [
-    'import',
-    'prettier',
-  ],
+  plugins: ['import', 'prettier'],
   rules: {
     'import/order': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -30,9 +23,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       alias: {
-        map: [
-          ['@', './resources/js'],
-        ],
+        map: [['@', './resources/js']],
         extensions: ['.js', '.json'],
       },
     },

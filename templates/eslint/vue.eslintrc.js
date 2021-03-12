@@ -18,9 +18,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: [
-    'import',
-  ],
+  plugins: ['import'],
   rules: {
     'import/order': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -29,9 +27,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       alias: {
-        map: [
-          ['@', './resources/js'],
-        ],
+        map: [['@', './resources/js']],
         extensions: ['.js', '.vue', '.json'],
       },
     },

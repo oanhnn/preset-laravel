@@ -1,130 +1,129 @@
 .node-job:
-  image: node:14-alpine
-  before_script:
-    - apk add --update --no-cache git build-base
-    - npm ci --quiet
-  cache:
-    key:
-      prefix: ${CI_COMMIT_REF_SLUG}
-      files:
-        - package.json
-        - package-lock.json
-    paths:
-      - node_modules/
+    image: node:14-alpine
+    before_script:
+        - apk add --update --no-cache git build-base
+        - npm ci --quiet
+    cache:
+        key:
+            prefix: ${CI_COMMIT_REF_SLUG}
+            files:
+                - package.json
+                - package-lock.json
+        paths:
+            - node_modules/
 
 .php-job:
-  image: oanhnn/laravel:latest
-  before_script:
-    - wget https://getcomposer.org/installer -O - -q | php -- --quiet --install-dir=/usr/local/bin --filename=composer
-    - composer config -g cache-dir "$(pwd)/composer-cache"
-    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --ignore-platform-reqs
-  cache:
-    key:
-      prefix: ${CI_COMMIT_REF_SLUG}
-      files:
-        - composer.json
-        - composer.lock
-    paths:
-      - composer-cache/
+    image: oanhnn/laravel:latest
+    before_script:
+        - wget https://getcomposer.org/installer -O - -q | php -- --quiet --install-dir=/usr/local/bin --filename=composer
+        - composer config -g cache-dir "$(pwd)/composer-cache"
+        - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --ignore-platform-reqs
+    cache:
+        key:
+            prefix: ${CI_COMMIT_REF_SLUG}
+            files:
+                - composer.json
+                - composer.lock
+        paths:
+            - composer-cache/
 
 #========================
 # Define pipeline stages
 #========================
 stages:
-  - test
-  - build
+    - test
+    - build
 
 #========================
 # Define global variables
 #========================
 variables:
-  GIT_DEPTH: 1
+    GIT_DEPTH: 1
 
 #========================
 # Define jobs
 #========================
 check:security:
-  stage: test
-  needs: []
-  image: docker:stable
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: '/certs'
-  only:
-    changes:
-      - composer.lock
-  script:
-    - docker run --rm -v $(pwd)/composer.lock:/app/composer.lock -w /app symfonycorp/cli security:check
+    stage: test
+    needs: []
+    image: docker:stable
+    services:
+        - docker:dind
+    variables:
+        DOCKER_DRIVER: overlay2
+        DOCKER_TLS_CERTDIR: '/certs'
+    only:
+        changes:
+            - composer.lock
+    script:
+        - docker run --rm -v $(pwd)/composer.lock:/app/composer.lock -w /app symfonycorp/cli security:check
 
 check:phpcs:
-  stage: test
-  needs: []
-  image: oanhnn/laravel:latest
-  before_script:
-    - wget -q -O phpcs https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
-    - chmod a+x phpcs
-  script:
-    - ./phpcs --standard=phpcs.xml.dist
+    stage: test
+    needs: []
+    image: oanhnn/laravel:latest
+    before_script:
+        - wget -q -O phpcs https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+        - chmod a+x phpcs
+    script:
+        - ./phpcs --standard=phpcs.xml.dist
 
 check:assets:
-  stage: test
-  needs: []
-  extends: .node-job
-  script:
-    - npm audit
-    - npm run lint
-    - npm run test
+    stage: test
+    needs: []
+    extends: .node-job
+    script:
+        - npm audit
+        - npm run lint
+        - npm run test
 
 test:phpunit:
-  stage: test
-  needs: []
-  extends: .php-job
-  variables:
-    MYSQL_ROOT_PASSWORD: rootpass
-    MYSQL_USER:     dev
-    MYSQL_PASSWORD: devpass
-    MYSQL_DATABASE: laravel
-    REDIS_PASSWORD: password
-    REDIS_HOST:     redis
-    DB_HOST:        mysql
-    DB_USERNAME:    dev
-    DB_PASSWORD:    devpass
-    DB_DATABASE:    laravel
-  services:
-    - name: mysql:8.0
-    - name: redis:alpine
-      command:
-        - redis-server
-        - --requirepass=${REDIS_PASSWORD}
-  script:
-    - docker-php-ext-enable xdebug;
-    - cp .env.example .env
-    - php artisan key:generate
-    - php artisan migrate --force --seed
-    - vendor/bin/phpunit --coverage-text --colors=never
-  coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
-  artifacts:
-    paths:
-      - storage/logs # for debugging
-    expire_in: 1 days
-    when: on_failure
+    stage: test
+    needs: []
+    extends: .php-job
+    variables:
+        MYSQL_ROOT_PASSWORD: rootpass
+        MYSQL_USER: dev
+        MYSQL_PASSWORD: devpass
+        MYSQL_DATABASE: laravel
+        REDIS_PASSWORD: password
+        REDIS_HOST: redis
+        DB_HOST: mysql
+        DB_USERNAME: dev
+        DB_PASSWORD: devpass
+        DB_DATABASE: laravel
+    services:
+        - name: mysql:8.0
+        - name: redis:alpine
+          command:
+              - redis-server
+              - --requirepass=${REDIS_PASSWORD}
+    script:
+        - docker-php-ext-enable xdebug;
+        - cp .env.example .env
+        - php artisan key:generate
+        - php artisan migrate --force --seed
+        - vendor/bin/phpunit --coverage-text --colors=never
+    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+    artifacts:
+        paths:
+            - storage/logs # for debugging
+        expire_in: 1 days
+        when: on_failure
 
 build:assets:
-  stage: build
-  needs:
-    - job: check:assets
-      artifacts: false
-  extends: .node-job
-  script:
-    - npm run production
-  artifacts:
-    paths:
-      - public/
-    expire_in: 1 days
-    when: on_success
-
+    stage: build
+    needs:
+        - job: check:assets
+          artifacts: false
+    extends: .node-job
+    script:
+        - npm run production
+    artifacts:
+        paths:
+            - public/
+        expire_in: 1 days
+        when: on_success
 # build:docker-image:
 #   stage: build
 #   needs: []

@@ -40,6 +40,20 @@ jobs:
       - name: Check coding style
         run: phpcs --standard=phpcs.xml.dist
 
+  check-psalm:
+    name: 'Check psalm'
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setting up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: psalm
+      - name: Check coding style
+        run: psalm --show-info=true
+
   run-tests:
     name: 'Test with PHP${{ matrix.php }}'
     strategy:
@@ -53,9 +67,9 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: rootpass
-          MYSQL_USER:          dev
-          MYSQL_PASSWORD:      devpass
-          MYSQL_DATABASE:      laravel
+          MYSQL_USER: dev
+          MYSQL_PASSWORD: devpass
+          MYSQL_DATABASE: laravel
         ports:
           - 3306/tcp
       redis:

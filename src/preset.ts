@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 import { resolve } from 'path'
 import { Preset } from 'apply'
 
@@ -68,7 +68,9 @@ Preset.group((preset) => {
     .remove(['lodash', 'axios'])
     .addDev('prettier', '^2.2')
     .merge({
-      scripts: { format: "prettier --write '**/*.{ts,js,vue,css,html,json}'" },
+      scripts: {
+        format: "prettier --write '**/*.{ts,js,vue,css,html,json}'",
+      },
       engines: { nodes: '>= 14.x.x' },
     })
 
