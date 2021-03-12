@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import { existsSync, mkdirSync, readFileSync } from 'fs'
+import { resolve } from 'path'
 import { Preset } from 'apply'
 
 Preset.setName('oanhnn/laravel')
@@ -10,22 +10,24 @@ Preset.option('default', true)
   .option('github', false)
   .option('gitlab', false)
   .option('phpcs', false)
-  .option('tailwind', false)
+  .option('tailwindcss', false)
   .option('typescript', false)
   .option('vue3', false)
   .option('vue2', false)
   .option('eslint', false)
+  .option('psalm', false)
 
 Preset.hook(({ options, targetDirectory }) => {
-  // Check has VueJS
-  options.vue = options.vue2 || options.vue3
+  // Set vue2 to FALSE if vue3 is TRUE
+  options.vue = options.vue3 || options.vue2
+  options.vue2 = !options.vue3 && options.vue2
 
   // Create target directory if it is not existed
-  options.targetPath = path.resolve(targetDirectory)
-  if (!fs.existsSync(options.targetPath)) {
-    fs.mkdirSync(options.targetPath)
+  options.targetPath = resolve(targetDirectory)
+  if (!existsSync(options.targetPath)) {
+    mkdirSync(options.targetPath)
   }
-})
+}).withTitle('Prepare options')
 
 // Create project
 // - [x] Create project by Composer
@@ -86,7 +88,7 @@ Preset.group((preset) => {
 Preset.group((preset) => {
   // Extract files from the preset's `default` template directory to the target directory.
   preset
-    .extract('tailwind')
+    .extract('tailwindcss')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
@@ -102,7 +104,7 @@ Preset.group((preset) => {
     .addDev('@tailwindcss/typography', '^0.4')
 })
   .withTitle('Execute tailwind tasks')
-  .ifOption('tailwind')
+  .ifOption('tailwindcss')
 
 // Docker
 // - [x] Setup docker for development (laravel/sail)
@@ -156,7 +158,24 @@ Preset.group((preset) => {
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 })
   .withTitle('Copy PHPCS config file')
-  .ifOptionEquals('phpcs')
+  .ifOption('phpcs')
+
+// PSALM
+// - [x] Add vimeo/psalm and plugin for Laravel
+// - [x] Setup coding file
+Preset.group((preset) => {
+  preset
+    .editPhpPackages()
+    .addDev('vimeo/psalm', '^4.6')
+    .addDev('psalm/plugin-laravel', '^1.4')
+
+  preset
+    .extract('psalm')
+    .withDots(true)
+    .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
+})
+  .withTitle('Copy PSALM config file')
+  .ifOption('psalm')
 
 // Install Typescript
 // - [x] Add Typescript
@@ -207,7 +226,7 @@ Preset.group((preset) => {
 // - [x] Setup config file
 Preset.group((preset) => {
   const extensions = ['.js', '.jsx']
-  const stacks = []
+  const stacks: string[] = []
   let devDependencies: Record<string, string> = {
     eslint: '^7.17',
     'eslint-config-prettier': '^8.1',
@@ -255,7 +274,15 @@ Preset.group((preset) => {
   })
 
   preset
-    .extract(`eslint/${stacks.join('-')}.eslintrc.js`)
+    .extract()
+    .from('eslint/.eslintignore')
+    .to('.eslintignore')
+    .withDots(true)
+    .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
+
+  preset
+    .extract()
+    .from(`eslint/${stacks.join('-')}.eslintrc.js`)
     .to('.eslintrc.js')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')

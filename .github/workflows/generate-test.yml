@@ -18,7 +18,7 @@ jobs:
           - '--github'
           - '--gitlab'
           - '--phpcs'
-          - '--tailwind --no-default'
+          - '--tailwindcss --no-default'
           - '--eslint'
           - '--eslint --typescript'
           - '--eslint --vue2'
