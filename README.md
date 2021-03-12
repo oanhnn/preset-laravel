@@ -3,9 +3,7 @@
 ## Usage
 
 ```shell
-$ composer create-project laravel/laravel /path/to/project
-$ cd /path/to/project
-$ npx apply https://github.com/oanhnn/preset-laravel.git
+$ npx apply oanhnn/preset-laravel [--options] [targetPath]
 ```
 
 Options:
@@ -16,7 +14,8 @@ Options:
 | `--gitlab`         | Add Gitlab CI config file            |
 | `--github`         | Add Github Workflow setup files      |
 | `--phpcs`          | Add PHPCS default config file        |
-| `--tailwind`       | Add TailwindCSS setup files          |
+| `--psalm`          | Add PSALM default config file        |
+| `--tailwindcss`    | Add TailwindCSS setup files          |
 | `--typescript`     | Add Typescript setup files           |
 | `--vue2`           | Add Vue 2 setup files                |
 | `--vue3`           | Add Vue 3 setup files                |
