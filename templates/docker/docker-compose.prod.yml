@@ -4,10 +4,10 @@ version: '3.5'
 # X-Templates
 # =========================================
 x-app-service: &app-service
-  image: oanhnn/laravel:1.0
-  # build:
-  #   context: .
-  #   dockerfile: .docker/php/Dockerfile
+  # image: oanhnn/laravel:1.0
+  build:
+    context: .
+    dockerfile: .docker/php/Dockerfile
   depends_on:
     - mysql
     - redis
@@ -37,45 +37,45 @@ volumes:
 # Services
 # =========================================
 services:
-  redis:
-    image: redis:alpine
-    command: redis-server --appendonly yes --bind 0.0.0.0 --port ${REDIS_PORT:-6379}
-    networks:
-      - redis-net
-    ports:
-      - ${REDIS_PORT:-6379}:${REDIS_PORT:-6379}
-    restart: unless-stopped
-    volumes:
-      - redis-vol:/data
-    healthcheck:
-      test: PING=$$(redis-cli -h `hostname -i` -p 6379 ping) && [ "$$PING" == "PONG" ]
-      start_period: 1s
-      interval: 1s
-      timeout: 3s
-      retries: 10
+  # redis:
+  #   image: redis:alpine
+  #   command: redis-server --appendonly yes --bind 0.0.0.0 --port ${REDIS_PORT:-6379}
+  #   networks:
+  #     - redis-net
+  #   ports:
+  #     - ${REDIS_PORT:-6379}:${REDIS_PORT:-6379}
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-vol:/data
+  #   healthcheck:
+  #     test: PING=$$(redis-cli -h `hostname -i` -p 6379 ping) && [ "$$PING" == "PONG" ]
+  #     start_period: 1s
+  #     interval: 1s
+  #     timeout: 3s
+  #     retries: 10
 
-  mysql:
-    image: mysql:8.0
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --bind-address=0.0.0.0 --port=${DB_PORT:-3306}
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
-      MYSQL_USER: ${DB_USERNAME:-dev}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-devpass}
-      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
-    networks:
-      - mysql-net
-    ports:
-      - ${DB_PORT:-3306}:${DB_PORT:-3306}
-    restart: unless-stopped
-    volumes:
-      - mysql-vol:/var/lib/mysql
-      # - .docker/mysql:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: MYSQL_PWD=$${MYSQL_PASSWORD} mysqladmin -h `hostname -i` -P ${DB_PORT:-3306} -u $${MYSQL_USER} --silent ping
-      start_period: 2s
-      interval: 1s
-      timeout: 3s
-      retries: 10
+  # mysql:
+  #   image: mysql:8.0
+  #   command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --bind-address=0.0.0.0 --port=${DB_PORT:-3306}
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+  #     MYSQL_USER: ${DB_USERNAME:-dev}
+  #     MYSQL_PASSWORD: ${DB_PASSWORD:-devpass}
+  #     MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+  #   networks:
+  #     - mysql-net
+  #   ports:
+  #     - ${DB_PORT:-3306}:${DB_PORT:-3306}
+  #   restart: unless-stopped
+  #   volumes:
+  #     - mysql-vol:/var/lib/mysql
+  #     # - .docker/mysql:/docker-entrypoint-initdb.d:ro
+  #   healthcheck:
+  #     test: MYSQL_PWD=$${MYSQL_PASSWORD} mysqladmin -h `hostname -i` -P ${DB_PORT:-3306} -u $${MYSQL_USER} --silent ping
+  #     start_period: 2s
+  #     interval: 1s
+  #     timeout: 3s
+  #     retries: 10
 
   nginx:
     image: nginx:stable-alpine

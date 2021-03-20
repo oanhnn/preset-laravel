@@ -1,6 +1,7 @@
 # User specific & automatically generated files #
 #################################################
-node_modules
+/node_modules
+/vendor
 public/hot
 public/storage
 public/fonts
@@ -10,7 +11,6 @@ public/js
 public/svg
 public/mix-manifest.json
 storage/*.key
-vendor
 .vagrant
 Homestead.json
 Homestead.yaml
@@ -22,6 +22,7 @@ docker-compose.override.yml
 .phpunit.result.cache
 phpunit.xml
 phpcs.xml
+supervisord.*
 
 # IDE and editor specific files #
 #################################

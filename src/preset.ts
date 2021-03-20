@@ -102,6 +102,7 @@ Preset.group((preset) => {
     .addDev('postcss-import', '^14.0')
     .addDev('postcss-nested', '^5.0')
     .addDev('tailwindcss', '^2.0')
+    .addDev('@tailwindcss/jir', '*')
     .addDev('@tailwindcss/forms', '^0.2')
     .addDev('@tailwindcss/typography', '^0.4')
 })
@@ -276,16 +277,7 @@ Preset.group((preset) => {
   })
 
   preset
-    .extract()
-    .from('eslint/.eslintignore')
-    .to('.eslintignore')
-    .withDots(true)
-    .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
-
-  preset
-    .extract()
-    .from(`eslint/${stacks.join('-')}.eslintrc.js`)
-    .to('.eslintrc.js')
+    .extract(['eslint/.eslintignore', `eslint/${stacks.join('-')}.eslintrc.js`])
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
