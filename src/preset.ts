@@ -71,7 +71,7 @@ Preset.group((preset) => {
       scripts: {
         format: "prettier --write '**/*.{ts,js,vue,css,html,json}'",
       },
-      engines: { nodes: '>= 14.x.x' },
+      engines: { node: '>= 14.x.x' },
     })
 
   // Comment all source code begin with `window.`
@@ -101,8 +101,7 @@ Preset.group((preset) => {
     .addDev('postcss', '^8.2')
     .addDev('postcss-import', '^14.0')
     .addDev('postcss-nested', '^5.0')
-    .addDev('tailwindcss', '^2.0')
-    .addDev('@tailwindcss/jir', '*')
+    .addDev('tailwindcss', '^2.1')
     .addDev('@tailwindcss/forms', '^0.2')
     .addDev('@tailwindcss/typography', '^0.4')
 })
