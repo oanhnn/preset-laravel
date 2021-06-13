@@ -3,13 +3,6 @@
     "target": "esnext",
     "module": "esnext",
     "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -23,7 +16,7 @@
     ]
   },
   "include": [
-    "resources/**/*.ts",
+    "resources/**/*.js",
     "resources/**/*.vue"
   ],
   "exclude": [

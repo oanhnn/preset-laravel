@@ -11,6 +11,7 @@ Options:
 | Option             | Description                          |
 |:-------------------|:-------------------------------------|
 | `--docker`         | Add Docker setup files               |
+| `--eslint`         | Add ESLint setup files               |
 | `--gitlab`         | Add Gitlab CI config file            |
 | `--github`         | Add Github Workflow setup files      |
 | `--phpcs`          | Add PHPCS default config file        |

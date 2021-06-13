@@ -7,26 +7,20 @@ Preset.setName('oanhnn/laravel')
 // List options
 Preset.option('default', true)
   .option('docker', false)
+  .option('eslint', false)
   .option('github', false)
   .option('gitlab', false)
   .option('phpcs', false)
+  .option('psalm', false)
   .option('tailwindcss', false)
   .option('typescript', false)
   .option('vue3', false)
   .option('vue2', false)
-  .option('eslint', false)
-  .option('psalm', false)
 
-Preset.hook(({ options, targetDirectory }) => {
+Preset.hook(({ options }) => {
   // Set vue2 to FALSE if vue3 is TRUE
   options.vue = options.vue3 || options.vue2
   options.vue2 = !options.vue3 && options.vue2
-
-  // Create target directory if it is not existed
-  options.targetPath = resolve(targetDirectory)
-  if (!existsSync(options.targetPath)) {
-    mkdirSync(options.targetPath)
-  }
 }).withTitle('Prepare options')
 
 // Create project
@@ -39,7 +33,7 @@ Preset.group((preset) => {
     'composer',
     'create-project',
     'laravel/laravel',
-    preset.options.targetPath,
+    preset.targetDirectory,
     '--ignore-platform-reqs',
     '--prefer-dist'
   )
@@ -61,7 +55,7 @@ Preset.group((preset) => {
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
-  // Setup prettier, postcss
+  // Setup prettier
   preset
     .editNodePackages()
     .set('private', true)
@@ -102,7 +96,7 @@ Preset.group((preset) => {
     .addDev('postcss-import', '^14.0')
     .addDev('postcss-nested', '^5.0')
     .addDev('tailwindcss', '^2.1')
-    .addDev('@tailwindcss/forms', '^0.2')
+    .addDev('@tailwindcss/forms', '^0.3')
     .addDev('@tailwindcss/typography', '^0.4')
 })
   .withTitle('Execute tailwind tasks')
@@ -191,6 +185,9 @@ Preset.group((preset) => {
     .extract('typescript')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
+
+  // Remove jsconfig.json
+  preset.delete('jsconfig.json')
 })
   .withTitle('Install Typescript')
   .ifOption('typescript')
@@ -275,17 +272,20 @@ Preset.group((preset) => {
     },
   })
 
+  // Extract ESLint configurae files
   preset
     .extract(['eslint/.eslintignore', `eslint/${stacks.join('-')}.eslintrc.js`])
+    .to('./..')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
+  // Fix eslint for Vue 2
   preset
     .edit('.eslintrc.js')
     .update((content) => {
       return content.replace(
-        "'plugin:vue/recommended',",
-        "'plugin:vue/vue3-recommended',"
+        "'plugin:vue/vue3-recommended',",
+        "'plugin:vue/recommended',"
       )
     })
     .ifOption('vue3')
