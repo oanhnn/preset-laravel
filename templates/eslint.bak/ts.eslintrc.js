@@ -26,7 +26,7 @@ module.exports = {
     'prettier/prettier': 'warn',
   },
   settings: {
-    'import/extensions': ['.js', '.jsx','.mjs','.ts','tsx', '.json'],
+    'import/extensions': ['.js', '.jsx', '.mjs', '.ts', 'tsx', '.json'],
     'import/resolver': {
       alias: {
         map: [['@', './resources/js']],

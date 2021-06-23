@@ -222,7 +222,7 @@ Preset.group((preset) => {
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
   // Remove jsconfig.json
-  preset.delete('jsconfig.json')
+  preset.delete(['jsconfig.json'])
 })
   .withTitle('Install Typescript')
   .ifOption('typescript')

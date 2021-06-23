@@ -1,6 +1,9 @@
 const pkg = require('./package.json')
 
-const hasPkg = (p) => pkg.dependencies[p] || pkg.devDependencies[p]
+const hasPkg = (p) =>
+  (typeof pkg.dependencies === 'object' && pkg.dependencies[p]) ||
+  (typeof pkg.devDependencies === 'object' && pkg.devDependencies[p])
+
 const hasVue = hasPkg('vue')
 const hasTs = hasPkg('typescript')
 
@@ -19,7 +22,7 @@ const configs = [
   'plugin:prettier/recommended',
 ]
   .flat()
-  .filter()
+  .filter((v) => v != '')
 
 const extensions = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.json']
 const resolver = {
