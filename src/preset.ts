@@ -253,7 +253,6 @@ Preset.group((preset) => {
 // - [x] Setup config file
 Preset.group((preset) => {
   const extensions = ['.js', '.jsx']
-  const stacks: string[] = []
   let devDependencies: Record<string, string> = {
     eslint: '^7.17',
     'eslint-config-prettier': '^8.1',
@@ -265,7 +264,6 @@ Preset.group((preset) => {
 
   if (preset.options.vue) {
     extensions.push('.vue')
-    stacks.push('vue')
     devDependencies = {
       ...devDependencies,
       'eslint-plugin-vue': '^7.3',
@@ -275,7 +273,6 @@ Preset.group((preset) => {
 
   if (preset.options.typescript) {
     extensions.push('.ts', '.tsx')
-    stacks.push('ts')
     devDependencies = {
       ...devDependencies,
       'eslint-import-resolver-typescript': '^2.3',
@@ -299,10 +296,9 @@ Preset.group((preset) => {
     },
   })
 
-  // Extract ESLint configurae files
+  // Extract ESLint config files
   preset
-    .extract(['eslint/.eslintignore', `eslint/${stacks.join('-')}.eslintrc.js`])
-    .to('./..')
+    .extract('eslint')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
@@ -315,7 +311,7 @@ Preset.group((preset) => {
         "'plugin:vue/recommended',"
       )
     })
-    .ifOption('vue3')
+    .ifOption('vue2')
 })
   .withTitle('Install ESlint')
   .ifOption('eslint')
