@@ -1,3 +1,5 @@
+import { existsSync, mkdirSync } from 'fs'
+import { resolve } from 'path'
 import { Preset } from 'apply'
 
 Preset.setName('oanhnn/laravel')
@@ -15,10 +17,15 @@ Preset.option('default', true)
   .option('vue3', false)
   .option('vue2', false)
 
-Preset.hook(({ options }) => {
+Preset.hook(({ options, targetDirectory }) => {
   // Set vue2 to FALSE if vue3 is TRUE
   options.vue = options.vue3 || options.vue2
   options.vue2 = !options.vue3 && options.vue2
+
+  const path = resolve(targetDirectory)
+  if (!existsSync(path)) {
+    mkdirSync(path)
+  }
 }).withTitle('Prepare options')
 
 // Create project

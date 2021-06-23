@@ -23,7 +23,7 @@ jobs:
           - '--eslint --vue2'
           - '--eslint --vue3 --typescript'
         laravel:
-          - '^8.40'
+          - '^8.0'
         php:
           - 8.0
         node:
