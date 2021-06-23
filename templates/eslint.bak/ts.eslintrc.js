@@ -10,18 +10,15 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
-    'prettier',
+    'plugin:prettier/recommended',
   ],
   globals: {
     // axios: true,
   },
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: ['import', 'prettier', '@typescript-eslint'],
   rules: {
     'import/order': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -29,7 +26,11 @@ module.exports = {
     'prettier/prettier': 'warn',
   },
   settings: {
+    'import/extensions': ['.js', '.jsx','.mjs','.ts','tsx', '.json'],
     'import/resolver': {
+      alias: {
+        map: [['@', './resources/js']],
+      },
       typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
     },
   },

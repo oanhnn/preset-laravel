@@ -6,10 +6,12 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:vue/recommended',
+    'eslint:recommended',
     'plugin:import/recommended',
-    '@vue/standard',
-    '@vue/prettier/recommended',
+    'plugin:import/typescript',
+    'plugin:vue/vue3-recommended',
+    '@vue/typescript/recommended',
+    'plugin:prettier/recommended',
   ],
   globals: {
     // axios: true,
@@ -23,13 +25,15 @@ module.exports = {
     'import/order': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'prettier/prettier': 'warn',
   },
   settings: {
+    'import/extensions': ['.vue', '.js', '.jsx', '.mjs', '.ts', 'tsx', '.json'],
     'import/resolver': {
       alias: {
         map: [['@', './resources/js']],
-        extensions: ['.js', '.vue', '.json'],
       },
+      typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
     },
   },
 }

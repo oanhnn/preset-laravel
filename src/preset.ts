@@ -1,5 +1,3 @@
-import { existsSync, mkdirSync } from 'fs'
-import { resolve } from 'path'
 import { Preset } from 'apply'
 
 Preset.setName('oanhnn/laravel')
@@ -59,19 +57,38 @@ Preset.group((preset) => {
   preset
     .editNodePackages()
     .set('private', true)
-    .remove(['lodash', 'axios'])
+    // .remove(['lodash', 'axios'])
     .addDev('prettier', '^2.2')
     .merge({
       scripts: {
-        format: "prettier --write '**/*.{ts,js,vue,css,html,json}'",
+        format: "prettier --write '**/*.{ts,tsx,js,jsx,vue,css,html,json}'",
       },
       engines: { node: '>= 14.x.x' },
     })
 
+  // Update composer.json
+  preset
+    .editPhpPackages()
+    .addDev('roave/security-advisories', 'dev-latest')
+    .addDev('brianium/paratest', '^6.2')
+    .merge({
+      scripts: {
+        audit: ['composer update --dry-run roave/security-advisories'],
+        test: ['@php artisan test --parallel --colors --no-coverage'],
+      },
+      config: {
+        'optimize-autoloader': true,
+        'preferred-install': 'dist',
+        'sort-packages': true,
+      },
+      'minimum-stability': 'dev',
+      'prefer-stable': true,
+    })
+
   // Comment all source code begin with `window.`
-  preset.edit('resources/js/bootstrap.js').update((content) => {
-    return content.replace(/^window\./gm, '// window.')
-  })
+  // preset.edit('resources/js/bootstrap.js').update((content) => {
+  //   return content.replace(/^window\./gm, '// window.')
+  // })
 
   // Clean up some files
   preset.delete(['phpunit.xml', '.styleci.yml']).withTitle('Clean up')
@@ -95,7 +112,7 @@ Preset.group((preset) => {
     .addDev('postcss', '^8.2')
     .addDev('postcss-import', '^14.0')
     .addDev('postcss-nested', '^5.0')
-    .addDev('tailwindcss', '^2.1')
+    .addDev('tailwindcss', '^2.2')
     .addDev('@tailwindcss/forms', '^0.3')
     .addDev('@tailwindcss/typography', '^0.4')
 })
@@ -146,8 +163,17 @@ Preset.extract('gitlab')
 // - [x] Add squizlabs/php_codesniffer
 // - [x] Setup coding style
 Preset.group((preset) => {
-  preset.editPhpPackages().addDev('squizlabs/php_codesniffer', '^3.5')
+  // Update composer.json
+  preset
+    .editPhpPackages()
+    .addDev('squizlabs/php_codesniffer', '^3.5')
+    .merge({
+      scripts: {
+        lint: ['vendor/bin/phpcs', 'vendor/bin/phpcbf'],
+      },
+    })
 
+  // Extract PHPCS config file
   preset
     .extract('phpcs')
     .withDots(true)
@@ -160,11 +186,13 @@ Preset.group((preset) => {
 // - [x] Add vimeo/psalm and plugin for Laravel
 // - [x] Setup coding file
 Preset.group((preset) => {
+  // Update composer.json
   preset
     .editPhpPackages()
     .addDev('vimeo/psalm', '^4.6')
     .addDev('psalm/plugin-laravel', '^1.4')
 
+  // Extract PSALM config file
   preset
     .extract('psalm')
     .withDots(true)
@@ -201,7 +229,7 @@ Preset.group((preset) => {
     .remove(['@vue/compiler-sfc'])
     .addDev('vue', '^2.6')
     .addDev('vue-template-compiler', '^2.6')
-    .addDev('vue-loader', '^15')
+    .addDev('vue-loader', '^15.9')
 })
   .withTitle('Install Vue 2')
   .ifOption('vue2')
@@ -213,9 +241,9 @@ Preset.group((preset) => {
   preset
     .editNodePackages()
     .remove(['vue-template-compiler'])
-    .addDev('vue', '^3.0')
-    .addDev('@vue/compiler-sfc', '^3.0')
-    .addDev('vue-loader', '^16.1')
+    .addDev('vue', '^3.1')
+    .addDev('@vue/compiler-sfc', '^3.1')
+    .addDev('vue-loader', '^16.2')
 })
   .withTitle('Install Vue 3')
   .ifOption('vue3')
@@ -241,8 +269,7 @@ Preset.group((preset) => {
     devDependencies = {
       ...devDependencies,
       'eslint-plugin-vue': '^7.3',
-      '@vue/eslint-config-prettier': '^6.0',
-      '@vue/eslint-config-standard': '^6.0',
+      'eslint-import-resolver-node': '^0.3.4',
     }
   }
 

@@ -5,21 +5,10 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "resource/js/*"
-      ]
+      "@/*": ["resources/js/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ]
+    "lib": ["esnext", "dom", "dom.iterable"]
   },
-  "include": [
-    "resources/**/*.js",
-    "resources/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["resources/**/*.js", "resources/**/*.vue"],
+  "exclude": ["node_modules"]
 }
