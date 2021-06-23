@@ -14,20 +14,17 @@ jobs:
       fail-fast: false
       matrix:
         options:
-          - '--docker'
           - '--github'
           - '--gitlab'
           - '--phpcs'
-          - '--tailwindcss --no-default'
+          - '--tailwindcss'
           - '--eslint'
           - '--eslint --typescript'
           - '--eslint --vue2'
-          - '--eslint --vue3'
           - '--eslint --vue3 --typescript'
         laravel:
-          - '^8.0'
+          - '^8.40'
         php:
-          - 7.4
           - 8.0
         node:
           - 14
@@ -76,18 +73,18 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Get npm cache directory path
-        id: npm-cache-dir-path
-        run: echo "::set-output name=dir::$(npm config get cache)"
+      # - name: Get npm cache directory path
+      #   id: npm-cache-dir-path
+      #   run: echo "::set-output name=dir::$(npm config get cache)"
 
-      - name: Cache dependencies
-        id: npm-cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
+      # - name: Cache dependencies
+      #   id: npm-cache
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-npm-
 
       - name: Create project with composer
         run: composer create-project --prefer-dist laravel/laravel=${{ matrix.laravel }} ./ci-test
@@ -100,11 +97,11 @@ jobs:
         run: php artisan test
         working-directory: ./ci-test
 
-      - name: Run with docker
-        if: contains(matrix.options, '--docker')
-        run: |
-          vendor/bin/sail up -d
-          sleep 20s
-          curl --silent --show-error --fail http://127.0.0.1/
-          vendor/bin/sail down
-        working-directory: ./ci-test
+      # - name: Run with docker
+      #   if: contains(matrix.options, '--docker')
+      #   run: |
+      #     vendor/bin/sail up -d
+      #     sleep 20s
+      #     curl --silent --show-error --fail http://127.0.0.1/
+      #     vendor/bin/sail down
+      #   working-directory: ./ci-test
