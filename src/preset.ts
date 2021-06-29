@@ -66,31 +66,33 @@ Preset.group((preset) => {
     .set('private', true)
     // .remove(['lodash', 'axios'])
     .addDev('prettier', '^2.2')
-    .merge({
-      scripts: {
-        format: "prettier --write '**/*.{ts,tsx,js,jsx,vue,css,html,json}'",
-      },
-      engines: { node: '>= 14.x.x' },
-    })
+
+  preset.editNodePackages().merge({
+    scripts: {
+      format: "prettier --write '**/*.{ts,tsx,js,jsx,vue,css,html,json}'",
+    },
+    engines: { node: '>= 14.x.x' },
+  })
 
   // Update composer.json
   preset
     .editPhpPackages()
     .addDev('roave/security-advisories', 'dev-latest')
     .addDev('brianium/paratest', '^6.2')
-    .merge({
-      scripts: {
-        audit: ['composer update --dry-run roave/security-advisories'],
-        test: ['@php artisan test --parallel --colors --no-coverage'],
-      },
-      config: {
-        'optimize-autoloader': true,
-        'preferred-install': 'dist',
-        'sort-packages': true,
-      },
-      'minimum-stability': 'dev',
-      'prefer-stable': true,
-    })
+
+  preset.editPhpPackages().merge({
+    scripts: {
+      audit: ['composer update --dry-run roave/security-advisories'],
+      test: ['@php artisan test --parallel --colors --no-coverage'],
+    },
+    config: {
+      'optimize-autoloader': true,
+      'preferred-install': 'dist',
+      'sort-packages': true,
+    },
+    'minimum-stability': 'dev',
+    'prefer-stable': true,
+  })
 
   // Comment all source code begin with `window.`
   // preset.edit('resources/js/bootstrap.js').update((content) => {
