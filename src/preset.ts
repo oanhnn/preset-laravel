@@ -60,26 +60,25 @@ Preset.group((preset) => {
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
-  // Setup prettier
-  preset
-    .editNodePackages()
-    .set('private', true)
-    // .remove(['lodash', 'axios'])
-    .addDev('prettier', '^2.2')
+  // Add `prettier` package
+  preset.editNodePackages().addDev('prettier', '^2.2')
 
+  // Add `format` script and update `package.json`
   preset.editNodePackages().merge({
+    private: true,
     scripts: {
       format: "prettier --write '**/*.{ts,tsx,js,jsx,vue,css,html,json}'",
     },
     engines: { node: '>= 14.x.x' },
   })
 
-  // Update composer.json
+  // Add `roave/security-advisories` and `brianium/paratest` package
   preset
     .editPhpPackages()
     .addDev('roave/security-advisories', 'dev-latest')
     .addDev('brianium/paratest', '^6.2')
 
+  // Update `composer.json`
   preset.editPhpPackages().merge({
     scripts: {
       audit: ['composer update --dry-run roave/security-advisories'],
@@ -93,11 +92,6 @@ Preset.group((preset) => {
     'minimum-stability': 'dev',
     'prefer-stable': true,
   })
-
-  // Comment all source code begin with `window.`
-  // preset.edit('resources/js/bootstrap.js').update((content) => {
-  //   return content.replace(/^window\./gm, '// window.')
-  // })
 
   // Clean up some files
   preset.delete(['phpunit.xml', '.styleci.yml']).withTitle('Clean up')
@@ -143,7 +137,7 @@ Preset.group((preset) => {
     'php',
     'artisan',
     'sail:install',
-    '--with=mysql,redis,mailhog',
+    '--with=mysql,redis,minio,mailhog',
     '--no-interaction'
   )
 })
@@ -172,15 +166,15 @@ Preset.extract('gitlab')
 // - [x] Add squizlabs/php_codesniffer
 // - [x] Setup coding style
 Preset.group((preset) => {
-  // Update composer.json
-  preset
-    .editPhpPackages()
-    .addDev('squizlabs/php_codesniffer', '^3.5')
-    .merge({
-      scripts: {
-        lint: ['vendor/bin/phpcs', 'vendor/bin/phpcbf'],
-      },
-    })
+  // Add `squizlabs/php_codesniffer` package
+  preset.editPhpPackages().addDev('squizlabs/php_codesniffer', '^3.6')
+
+  // Add `lint` script
+  preset.editPhpPackages().merge({
+    scripts: {
+      lint: ['vendor/bin/phpcs', 'vendor/bin/phpcbf'],
+    },
+  })
 
   // Extract PHPCS config file
   preset
