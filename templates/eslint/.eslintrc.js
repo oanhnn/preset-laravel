@@ -15,8 +15,8 @@ const configs = [
     : '',
   hasVue
     ? [
-        hasPkg() ? 'plugin:vue/vue3-recommended' : 'plugin:vue/recommended',
-        '@vue/typescript/recommended',
+        hasPkg('@vue/compiler-sfc') ? 'plugin:vue/vue3-recommended' : 'plugin:vue/recommended',
+        hasTs ? '@vue/typescript/recommended' : '',
       ]
     : '',
   'plugin:prettier/recommended',

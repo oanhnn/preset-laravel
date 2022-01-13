@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+WWWUSER=${WWWUSER:-"www-data"}
+
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+    set -- php-fpm "$@"
+fi
+
+case "$1" in
+  artisan)
+    exec su-exec $WWWUSER php "$@"
+    ;;
+
+  *)
+    exec "$@"
+    ;;
+esac

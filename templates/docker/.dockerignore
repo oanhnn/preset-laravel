@@ -1,5 +1,6 @@
 # User specific & automatically generated files #
 #################################################
+.env
 .env.backup
 .git
 .gitignore
@@ -8,7 +9,6 @@
 .rnd
 .vagrant
 *.log
-docker-compose.*
 storage/*.key
 docs
 node_modules
@@ -18,8 +18,15 @@ Homestead.json
 Homestead.yaml
 LICENSE
 README.md
-phpcs.xml.dist
-phpcs.xml
+phpcs.xml*
+phpunit.xml*
+
+# Docker #
+##########
+.docker
+.dockerignore
+Dockerfile
+docker-compose.*
 
 # IDE and editor specific files #
 #################################

@@ -61,7 +61,7 @@ Preset.group((preset) => {
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
 
   // Add `prettier` package
-  preset.editNodePackages().addDev('prettier', '^2.2')
+  preset.editNodePackages().addDev('prettier', '^2.5')
 
   // Add `format` script and update `package.json`
   preset.editNodePackages().merge({
@@ -69,14 +69,11 @@ Preset.group((preset) => {
     scripts: {
       format: "prettier --write '**/*.{ts,tsx,js,jsx,vue,css,html,json}'",
     },
-    engines: { node: '>= 14.x.x' },
+    engines: { node: '>= 16.x.x' },
   })
 
   // Add `roave/security-advisories` and `brianium/paratest` package
-  preset
-    .editPhpPackages()
-    .addDev('roave/security-advisories', 'dev-latest')
-    .addDev('brianium/paratest', '^6.2')
+  preset.editPhpPackages().addDev('roave/security-advisories', 'dev-latest')
 
   // Update `composer.json`
   preset.editPhpPackages().merge({
@@ -111,35 +108,25 @@ Preset.group((preset) => {
   // Setup tailwindcss, postcss
   preset
     .editNodePackages()
-    .addDev('autoprefixer', '^10.2')
-    .addDev('postcss', '^8.2')
+    .addDev('autoprefixer', '^10.4')
+    .addDev('postcss', '^8.4')
     .addDev('postcss-import', '^14.0')
     .addDev('postcss-nested', '^5.0')
-    .addDev('tailwindcss', '^2.2')
-    .addDev('@tailwindcss/forms', '^0.3')
-    .addDev('@tailwindcss/typography', '^0.4')
+    .addDev('tailwindcss', '^3.0')
+    .addDev('@tailwindcss/forms', '^0.4')
+    .addDev('@tailwindcss/typography', '^0.5')
 })
   .withTitle('Execute tailwind tasks')
   .ifOption('tailwindcss')
 
 // Docker
-// - [x] Setup docker for development (laravel/sail)
+// - [x] Setup docker for development
 // - [x] Setup docker for production
 Preset.group((preset) => {
   preset
     .extract('docker')
     .withDots(true)
     .whenConflict(Preset.isInteractive() ? 'ask' : 'override')
-
-  // Install laravel/sail
-  preset.execute('composer', 'require', '--dev', 'laravel/sail')
-  preset.execute(
-    'php',
-    'artisan',
-    'sail:install',
-    '--with=mysql,redis,minio,mailhog',
-    '--no-interaction'
-  )
 })
   .withTitle('Copy Docker config files')
   .ifOption('docker')
@@ -209,7 +196,7 @@ Preset.group((preset) => {
 // - [x] Setup tsconfig.json
 Preset.group((preset) => {
   // Add Typescript
-  preset.editNodePackages().addDev('typescript', '^4.0')
+  preset.editNodePackages().addDev('typescript', '^4.3')
 
   // Setup tsconfig.json
   preset
@@ -244,8 +231,8 @@ Preset.group((preset) => {
   preset
     .editNodePackages()
     .remove(['vue-template-compiler'])
-    .addDev('vue', '^3.1')
-    .addDev('@vue/compiler-sfc', '^3.1')
+    .addDev('vue', '^3.2')
+    .addDev('@vue/compiler-sfc', '^3.2')
     .addDev('vue-loader', '^16.2')
 })
   .withTitle('Install Vue 3')
@@ -257,12 +244,12 @@ Preset.group((preset) => {
 Preset.group((preset) => {
   const extensions = ['.js', '.jsx']
   let devDependencies: Record<string, string> = {
-    eslint: '^7.17',
-    'eslint-config-prettier': '^8.1',
-    'eslint-plugin-import': '^2.22',
+    eslint: '^7.32',
+    'eslint-config-prettier': '^8.3',
+    'eslint-plugin-import': '^2.25',
     'eslint-plugin-node': '^11.1',
-    'eslint-plugin-prettier': '^3.3',
-    'eslint-plugin-promise': '^4.2',
+    'eslint-plugin-prettier': '^3.4',
+    'eslint-plugin-promise': '^4.3',
   }
 
   if (preset.options.vue) {

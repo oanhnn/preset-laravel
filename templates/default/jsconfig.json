@@ -10,5 +10,5 @@
     "lib": ["esnext", "dom", "dom.iterable"]
   },
   "include": ["resources/**/*.js", "resources/**/*.vue"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "public"]
 }

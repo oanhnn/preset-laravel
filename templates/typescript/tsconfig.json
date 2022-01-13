@@ -12,10 +12,10 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["resource/js/*"]
+      "@/*": ["resources/js/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable"]
   },
   "include": ["resources/**/*.ts", "resources/**/*.vue"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "public"]
 }
